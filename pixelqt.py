@@ -29,19 +29,23 @@ class Game():
 	
 	def get_default_config(self):
 		config = {'name': 'Game is not loaded',
-				'w': 80,
-				'h': 60,
-				'zoom': 2,
-				'draw_each': 1,
-				'save_each': 0,
-				'grid': False,
-				'invert_colors': False,
-				'label': False,
-				'gl': True
-			}
+			'w': 80,
+			'h': 60,
+			'zoom': 2,
+			'draw_each': 1,
+			'save_each': 0,
+			'grid': False,
+			'invert_colors': False,
+			'label': False,
+			'gl': False
+		}
 		return config
 	
 	def run(self):
+		#~ actions that are not takes from config on each frame drawing
+		self.actions.set_name()
+		self.actions.set_gl()
+		
 		sys.exit(self.app.exec_())
 		
 
@@ -83,7 +87,7 @@ class Widget(qg.QWidget):
 		
 		self.vbox_right = qg.QVBoxLayout()		# right vbox with controls
 		
-		#~ global hbox with two vboxes
+		#~ global horizontal box with two vertical boxes
 		self.global_hbox = qg.QHBoxLayout()
 		self.global_hbox.addLayout(self.vbox_left, 1)
 		self.global_hbox.addLayout(self.vbox_right)
@@ -106,9 +110,6 @@ class Field(qg.QGraphicsView):
 	def __init__(self, game_instanse):
 		super(Field, self).__init__()
 		self.game = game_instanse
-		
-		if self.game.config['gl']:
-			self.setViewport(QtOpenGL.QGLWidget())
 		
 		self.scene = qg.QGraphicsScene()
 		self.setScene(self.scene)
@@ -155,8 +156,10 @@ class Actions():
 			config[key] = newconfig[key]
 		newconfig = {}
 		
-		if not self.game.field.timer.isActive():
-			self.game.field.timer.start()
+		self.game.field.timer.start()
+	
+	def set_name(self):
+		self.game.win.setWindowTitle(self.game.config['name'])
 	
 	def set_resolution(self):
 		sender = self.game.win.sender()
@@ -171,6 +174,12 @@ class Actions():
 	def set_zoom(self):
 		zoom_factor = self.game.win.sender().value()
 		self.game.newconfig['zoom'] = zoom_factor
+	
+	def set_gl(self):
+		if self.game.config['gl']:
+			self.game.field.setViewport(QtOpenGL.QGLWidget())
+		else:
+			pass	# TODO: set non-opengl
 
 
 class Controls():
@@ -210,11 +219,10 @@ class Controls():
 		
 		return hbox_res
 	
-	def zoom(self, active=True):
-		
+	def zoom(self, active=True):		
 		label_zoom = qg.QLabel('Zoom:')
 		spin_zoom = qg.QSpinBox()
-		spin_zoom.setValue(self.game.config['zoom'])	# ti int?
+		spin_zoom.setValue(self.game.config['zoom'])
 		spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom)		# str?
 		
 		hbox_zoom = qg.QHBoxLayout()
