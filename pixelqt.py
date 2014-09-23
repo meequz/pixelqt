@@ -122,7 +122,7 @@ class Field(qg.QGraphicsView):
 		h = self.game.config['h']
 		zoom = self.game.config['zoom']
 		
-		imdata = self.game.draw_func()
+		imdata = self.game.draw_func(w, h)
 		imdata = numpy.uint8(imdata)
 		
 		qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
