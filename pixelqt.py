@@ -9,9 +9,7 @@ import numpy
 
 
 class Game():
-	'''
-	Creates all classes and config
-	'''
+	'''Creates all classes and config.'''
 	def __init__(self, draw_func):
 		self.config = self.get_default_config()
 		self.newconfig = {}
@@ -51,9 +49,7 @@ class Game():
 		
 
 class Window(qg.QMainWindow):
-	'''
-	Creates main widget and set window parameters (title, size etc)
-	'''
+	'''Creates main widget and set window parameters (title, size etc).'''
 	def __init__(self, game_instanse):
 		super(Window, self).__init__()
 		self.game = game_instanse
@@ -67,9 +63,7 @@ class Window(qg.QMainWindow):
 
 
 class Widget(qg.QWidget):
-	'''
-	Implements UI in window
-	'''
+	'''Implements UI in window.'''
 	def __init__(self, game_instanse):
 		super(Widget, self).__init__()
 		self.game = game_instanse
@@ -107,8 +101,7 @@ class Widget(qg.QWidget):
 
 
 class Field(qg.QGraphicsView):
-	'''
-	QGraphicsView widget. Implements drawing according to
+	'''QGraphicsView widget. Implements drawing according to
 	drawing parameters in self.game.config
 	'''
 	def __init__(self, game_instanse):
@@ -140,9 +133,7 @@ class Field(qg.QGraphicsView):
 		
 
 class Actions():
-	'''
-	Makes non-drawing changes accordig to config parameters
-	'''
+	'''Makes non-drawing changes accordig to config parameters.'''
 	def __init__(self, game_instanse):
 		self.game = game_instanse
 	
@@ -182,7 +173,7 @@ class Actions():
 	def set_background(self):
 		col = qg.QColorDialog.getColor()
 		if col.isValid():
-			color = ...		# TODO
+			color = ...		# TODO: convert col to (255, 255, 255) format
 			self.game.config['background'] = color
 	
 	def set_gl(self):
@@ -193,8 +184,8 @@ class Actions():
 
 
 class Controls():
-	'''
-	Contains base hboxes, connects them with actions and adds to vbox_right
+	'''Contains base hboxes, connects them with actions
+	and adds to vbox_right.
 	'''
 	def __init__(self, game_instanse):
 		self.game = game_instanse
