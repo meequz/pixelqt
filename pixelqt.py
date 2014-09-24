@@ -204,21 +204,27 @@ class Controls():
 		w = self.game.config['w']
 		h = self.game.config['h']
 		
-		label_res = qg.QLabel('Resolution:')
-		self.w_lineedit = qg.QLineEdit(str(w))
-		self.w_lineedit.textChanged[str].connect(self.game.actions.set_resolution)
+		label_w = qg.QLabel('Width:')
+		label_h = qg.QLabel('Height:')
 		
-		label_x = qg.QLabel('x')
+		self.w_lineedit = qg.QLineEdit(str(w))
 		self.h_lineedit = qg.QLineEdit(str(h))
+		self.w_lineedit.textChanged[str].connect(self.game.actions.set_resolution)
 		self.h_lineedit.textChanged[str].connect(self.game.actions.set_resolution)
 		
-		hbox_res = qg.QHBoxLayout()
-		hbox_res.addWidget(label_res)
-		hbox_res.addWidget(self.w_lineedit)
-		hbox_res.addWidget(label_x)
-		hbox_res.addWidget(self.h_lineedit)
+		hbox_w = qg.QHBoxLayout()
+		hbox_h = qg.QHBoxLayout()
 		
-		return hbox_res
+		hbox_w.addWidget(label_w)
+		hbox_h.addWidget(label_h)
+		hbox_w.addWidget(self.w_lineedit)
+		hbox_h.addWidget(self.h_lineedit)
+		
+		vbox = qg.QVBoxLayout()
+		vbox.addLayout(hbox_w)
+		vbox.addLayout(hbox_h)
+		
+		return vbox
 	
 	def zoom(self):
 		label_zoom = qg.QLabel('Zoom:')
