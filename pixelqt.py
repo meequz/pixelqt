@@ -41,7 +41,9 @@ class Game():
 		return config
 	
 	def run(self):
-		#~ actions that are not takes from config on each frame drawing
+		'''Perform actions that are not takes from config
+		on each frame drawing.
+		'''
 		self.actions.set_name()
 		self.actions.set_gl()
 		
@@ -180,7 +182,7 @@ class Actions():
 		if self.game.config['gl']:
 			self.game.field.setViewport(QtOpenGL.QGLWidget())
 		else:
-			pass	# TODO: set non-opengl
+			self.game.field.setViewport(qg.QWidget())
 
 
 class Controls():

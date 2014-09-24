@@ -14,6 +14,6 @@ mygame = pixelqt.Game(draw_func=get_imdata)
 mygame.config['name'] = 'Random colors'
 mygame.config['w'] = 120
 mygame.config['h'] = 90
-mygame.config['gl'] = True
+#~ mygame.config['gl'] = True
 mygame.init_controls('resolution', 'zoom', 'background')
 mygame.run()
