@@ -147,6 +147,7 @@ class Actions():
 			self.game.field.timer.start()
 	
 	def restart(self):
+		# TODO: add centering in field
 		config = self.game.config
 		newconfig = self.game.newconfig
 		
@@ -170,8 +171,9 @@ class Actions():
 			print('oops!')
 	
 	def set_zoom(self):
+		# TODO: add centering in field
 		zoom_factor = self.game.win.sender().value()
-		self.game.newconfig['zoom'] = zoom_factor
+		self.game.config['zoom'] = zoom_factor
 	
 	def set_background(self):
 		col = qg.QColorDialog.getColor()
