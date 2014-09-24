@@ -17,11 +17,11 @@ class Game():
 		self.draw_func = draw_func
 		self.app = qg.QApplication(sys.argv)
 		
-		self.field = Field(game_instanse=self)
-		self.controls = Controls(game_instanse=self)
-		self.actions = Actions(game_instanse=self)
+		self.field = Field(game_instance=self)
+		self.controls = Controls(game_instance=self)
+		self.actions = Actions(game_instance=self)
 		
-		self.win = Window(game_instanse=self)
+		self.win = Window(game_instance=self)
 		self.widget = self.win.widget
 		self.init_controls = self.win.widget.init_controls
 	
@@ -52,11 +52,11 @@ class Game():
 
 class Window(qg.QMainWindow):
 	'''Creates main widget and set window parameters (title, size etc).'''
-	def __init__(self, game_instanse):
+	def __init__(self, game_instance):
 		super(Window, self).__init__()
-		self.game = game_instanse
+		self.game = game_instance
 		
-		self.widget = Widget(game_instanse)
+		self.widget = Widget(game_instance)
 		self.setCentralWidget(self.widget)
 		
 		self.setWindowTitle(self.game.config['name'])
@@ -66,9 +66,9 @@ class Window(qg.QMainWindow):
 
 class Widget(qg.QWidget):
 	'''Implements UI in window.'''
-	def __init__(self, game_instanse):
+	def __init__(self, game_instance):
 		super(Widget, self).__init__()
-		self.game = game_instanse
+		self.game = game_instance
 		self.init_ui()
 	
 	def init_ui(self):
@@ -106,9 +106,9 @@ class Field(qg.QGraphicsView):
 	'''QGraphicsView widget. Implements drawing according to
 	drawing parameters in self.game.config
 	'''
-	def __init__(self, game_instanse):
+	def __init__(self, game_instance):
 		super(Field, self).__init__()
-		self.game = game_instanse
+		self.game = game_instance
 		
 		self.scene = qg.QGraphicsScene()
 		self.setScene(self.scene)
@@ -136,8 +136,8 @@ class Field(qg.QGraphicsView):
 
 class Actions():
 	'''Makes non-drawing changes accordig to config parameters.'''
-	def __init__(self, game_instanse):
-		self.game = game_instanse
+	def __init__(self, game_instance):
+		self.game = game_instance
 	
 	def pause(self):
 		if self.game.field.timer.isActive():
@@ -189,8 +189,8 @@ class Controls():
 	'''Contains base hboxes, connects them with actions
 	and adds to vbox_right.
 	'''
-	def __init__(self, game_instanse):
-		self.game = game_instanse
+	def __init__(self, game_instance):
+		self.game = game_instance
 	
 	def button_pause(self):
 		btn_pause = qg.QPushButton('Pause/Play')
