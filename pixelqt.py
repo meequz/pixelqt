@@ -32,6 +32,7 @@ class Game():
 			'w': 80,
 			'h': 60,
 			'zoom': 2,
+			'background': (0, 0, 0),
 			'draw_each': 1,
 			'save_each': 0,
 			'grid': False,
@@ -100,6 +101,9 @@ class Widget(qg.QWidget):
 		if 'zoom' in args:
 			hbox_zoom = self.game.controls.zoom()
 			self.vbox_right.addLayout(hbox_zoom)
+		if 'background' in args:
+			hbox_background = self.game.controls.background()
+			self.vbox_right.addLayout(hbox_background)
 
 
 class Field(qg.QGraphicsView):
@@ -175,6 +179,12 @@ class Actions():
 		zoom_factor = self.game.win.sender().value()
 		self.game.newconfig['zoom'] = zoom_factor
 	
+	def set_background(self):
+		col = qg.QColorDialog.getColor()
+		if col.isValid():
+			color = ...		# TODO
+			self.game.config['background'] = color
+	
 	def set_gl(self):
 		if self.game.config['gl']:
 			self.game.field.setViewport(QtOpenGL.QGLWidget())
@@ -199,7 +209,7 @@ class Controls():
 		btn_restart.clicked.connect(self.game.actions.restart)
 		return btn_restart
 	
-	def resolution(self, active=True):
+	def resolution(self):
 		w = self.game.config['w']
 		h = self.game.config['h']
 		
@@ -219,7 +229,7 @@ class Controls():
 		
 		return hbox_res
 	
-	def zoom(self, active=True):		
+	def zoom(self):
 		label_zoom = qg.QLabel('Zoom:')
 		spin_zoom = qg.QSpinBox()
 		spin_zoom.setValue(self.game.config['zoom'])
@@ -231,3 +241,13 @@ class Controls():
 		
 		return hbox_zoom
 	
+	def background(self):
+		label_background = qg.QLabel('Background:')
+		btn_background = qg.QPushButton('Choose')
+		btn_background.clicked.connect(self.game.actions.set_background)
+		
+		hbox_background = qg.QHBoxLayout()
+		hbox_background.addWidget(label_background)
+		hbox_background.addWidget(btn_background)
+		
+		return hbox_background

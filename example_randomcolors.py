@@ -15,5 +15,5 @@ mygame.config['name'] = 'Random colors'
 mygame.config['w'] = 120
 mygame.config['h'] = 90
 mygame.config['gl'] = True
-mygame.init_controls('resolution', 'zoom')
+mygame.init_controls('resolution', 'zoom', 'background')
 mygame.run()
