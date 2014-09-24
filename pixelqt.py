@@ -118,6 +118,7 @@ class Field(qg.QGraphicsView):
 		self.timer.start()
 	
 	def draw_frame(self):
+		# TODO: reimplement to dict format, {(2,3): (255,255,255)}
 		w = self.game.config['w']
 		h = self.game.config['h']
 		zoom = self.game.config['zoom']
