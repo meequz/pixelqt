@@ -47,6 +47,7 @@ class Game():
 		self.actions.set_name()
 		self.actions.set_gl()
 		
+		self.field.timer.start()
 		sys.exit(self.app.exec_())
 		
 
@@ -115,7 +116,6 @@ class Field(qg.QGraphicsView):
 		
 		self.timer=qc.QTimer()						# timer
 		self.timer.timeout.connect(self.draw_frame)	# when it triggers, it calls the draw_frame method
-		self.timer.start()
 	
 	def draw_frame(self):
 		# TODO: reimplement to dict format, {(2,3): (255,255,255)}
