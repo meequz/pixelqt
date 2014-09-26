@@ -183,9 +183,7 @@ class Actions():
     def set_background(self):
         col = qg.QColorDialog.getColor()
         if col.isValid():
-            color = (255,255,255)        # TODO: convert col to (255, 255, 255) format
-            # or no? better qcolor format and don't convert it every time
-            # dev can write smth like 'QColor((255,255,255))'
+            color = col.getRgb()[:3]
             self.game.config['background'] = color
     
     def set_gl(self):
