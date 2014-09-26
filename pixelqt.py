@@ -136,7 +136,7 @@ class Field(qg.QGraphicsView):
         line = numpy.array([self.game.config['background']] * w)
         imdata = numpy.array([line] * h)
         
-        drawdata = self.game.draw_func(w, h)
+        drawdata = self.game.draw_func(w, h, self.game.frame_count)
         for coords in drawdata:
             imdata[coords[0]][coords[1]] = drawdata[coords]
         

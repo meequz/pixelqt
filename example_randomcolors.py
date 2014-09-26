@@ -4,7 +4,7 @@ import pixelqt
 from random import randint
 
 
-def get_imdata(w, h):
+def get_imdata(w, h, frame_count):
     res = {}
     for line in range(h):
         for col in range(w):
