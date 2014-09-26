@@ -118,12 +118,17 @@ class Field(qg.QGraphicsView):
         self.timer.timeout.connect(self.draw_frame)    # when it triggers, it calls the draw_frame method
     
     def draw_frame(self):
-        # TODO: reimplement to dict format, {(2,3): (255,255,255)}
         w = self.game.config['w']
         h = self.game.config['h']
         zoom = self.game.config['zoom']
         
-        imdata = self.game.draw_func(w, h)
+        line = numpy.array([self.game.config['background']] * w)
+        imdata = numpy.array([line] * h)
+        
+        drawdata = self.game.draw_func(w, h)
+        for coords in drawdata:
+            imdata[coords[0]][coords[1]] = drawdata[coords]
+        
         imdata = numpy.uint8(imdata)
         
         qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
