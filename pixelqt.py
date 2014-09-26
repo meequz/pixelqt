@@ -14,6 +14,9 @@ class Game():
         self.config = self.get_default_config()
         self.newconfig = {}
         
+        self.frame_count = 0
+        self.state = 'running'
+        
         self.draw_func = draw_func
         self.app = qg.QApplication(sys.argv)
         
@@ -61,8 +64,16 @@ class Window(qg.QMainWindow):
         self.setCentralWidget(self.widget)
         
         self.setWindowTitle(self.game.config['name'])
-        self.statusBar()
+        self.statusbar = self.statusBar()
+        self.set_status()
+        
         self.show()
+    
+    def set_status(self):
+        message = 'Frame ' + str(self.game.frame_count) + ', ' + self.game.state
+        if self.game.newconfig:
+            message += '. Changes will take effect after restart'
+        self.statusbar.showMessage(message)
 
 
 class Widget(qg.QWidget):
@@ -73,10 +84,10 @@ class Widget(qg.QWidget):
         self.init_ui()
     
     def init_ui(self):
-        btn_pause = self.game.controls.button_pause()
+        btn_pause_or_play = self.game.controls.button_pause_or_play()
         btn_restart = self.game.controls.button_restart()
         self.bottom_btns = qg.QHBoxLayout()        # bottom buttons
-        self.bottom_btns.addWidget(btn_pause)
+        self.bottom_btns.addWidget(btn_pause_or_play)
         self.bottom_btns.addWidget(btn_restart)
         
         self.vbox_left = qg.QVBoxLayout()        # left vbox with graphics and buttons
@@ -139,28 +150,35 @@ class Field(qg.QGraphicsView):
         self.scene.clear()
         self.scene.addPixmap(self.qpix)
         
+        self.game.frame_count += 1
+        self.game.win.set_status()
+        
 
 class Actions():
     """Makes non-drawing changes accordig to config parameters."""
     def __init__(self, game_instance):
         self.game = game_instance
     
-    def pause(self):
+    def pause_or_play(self):
         if self.game.field.timer.isActive():
             self.game.field.timer.stop()
+            self.game.state = 'pause'
+            self.game.win.set_status()
         else:
-            self.game.field.timer.start()
+            self.game.actions.start()
+    
+    def start(self):
+        self.game.field.timer.start()
+        self.game.state = 'running'
     
     def restart(self):
         # TODO: add centering in field
-        config = self.game.config
-        newconfig = self.game.newconfig
+        for key in self.game.newconfig:
+            self.game.config[key] = self.game.newconfig[key]
+        self.game.newconfig = {}
         
-        for key in newconfig:
-            config[key] = newconfig[key]
-        newconfig = {}
-        
-        self.game.field.timer.start()
+        self.game.frame_count = 0
+        self.game.actions.start()
     
     def set_name(self):
         self.game.win.setWindowTitle(self.game.config['name'])
@@ -200,10 +218,10 @@ class Controls():
     def __init__(self, game_instance):
         self.game = game_instance
     
-    def button_pause(self):
-        btn_pause = qg.QPushButton('Pause/Play')
-        btn_pause.clicked.connect(self.game.actions.pause)
-        return btn_pause
+    def button_pause_or_play(self):
+        btn_pause_or_play = qg.QPushButton('Pause/Play')
+        btn_pause_or_play.clicked.connect(self.game.actions.pause_or_play)
+        return btn_pause_or_play
     
     def button_restart(self):
         btn_restart = qg.QPushButton('(Re)Start')

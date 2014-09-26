@@ -1,23 +1,23 @@
-changing zoom permanently
-scroll in vbox_right
-draw each X frame
-save each X frame
-'save screen' button
-active/inactive (blind) controls
-label on saving image (name and frame number)
-grid on/off when zoom >= 3
-invert colors
-statusbar:
+- scroll in vbox_right
+- draw each X frame
+- save each X frame
+- 'save screen' button
+- label on saving image (name and frame number)
+- grid on/off when zoom >= 3
+- invert colors
+- statusbar:
 	frame count
 	state (running/pause/saving image)
 	'changes will take effect after restart'
-hide/show vbox_right
-adding own parameters
-adding own hbox'es
-field presets
-fullscreen mode, switching by double click
-buttons to save/load config
-popup when incorrect values are set
+- hide/show vbox_right
+- adding own parameters
+- optimize draw if possible
+- adding own hbox'es
+- field presets
+- fullscreen mode, switching by double click if field or F11
+- buttons to save/load config
+- popup when incorrect values are set
+- active/inactive (blind) controls
 
 
 possible own parameters:
