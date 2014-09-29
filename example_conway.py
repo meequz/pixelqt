@@ -22,16 +22,13 @@ class GoL():
         for line in range(self.h):
             for col in range(self.w):
                 n = self.get_neighbors(line, col)
-                prevstate = self.matrix[line][col]
                 
-                if prevstate:
-                    if 2<=n<=3:
-                        new[line][col] = 1
-                    else:
-                        new[line][col] = 0
+                if n == 3:
+                    new[line][col] = 1
+                elif n == 2  and  self.matrix[line][col]:
+                    new[line][col] = 1
                 else:
-                    if n == 3:
-                        new[line][col] = 1
+                    new[line][col] = 0
         
         self.matrix = new
     
