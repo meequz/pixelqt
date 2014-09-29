@@ -6,6 +6,8 @@ from PyQt4 import QtCore as qc
 from PyQt4 import QtOpenGL
 from OpenGL import GL    # need for nvidia cards
 import numpy
+import datetime
+import os
 
 
 class Game():
@@ -152,12 +154,34 @@ class Field(qg.QGraphicsView):
         self.qpix.convertFromImage(qimage)
         self.qpix = self.qpix.scaled(self.qpix.size()*zoom, qc.Qt.KeepAspectRatio)
         
-        self.scene.clear()
-        self.scene.addPixmap(self.qpix)
+        # Draw and save if need
+        try:
+            if self.game.frame_count % self.game.config['draw_each'] == 0:
+                self.scene.clear()
+                self.scene.addPixmap(self.qpix)
+        except ZeroDivisionError:
+            pass
+        try:
+            if self.game.frame_count % self.game.config['save_each'] == 0:
+                self.save_frame()
+        except ZeroDivisionError:
+            pass
         
         self.game.frame_count += 1
         self.game.win.set_status()
+    
+    def save_frame(self):
+        directory = 'screenshots'
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         
+        date = datetime.datetime.now().strftime('%G-%m-%d-%H-%M-%S-%f')
+        filename = self.game.config['name'] + '_' +\
+            date + '_' +\
+            str(self.game.frame_count) + '.png'
+        
+        self.qpix.save(directory + '/' + filename)
+
 
 class Actions():
     """Makes non-drawing changes accordig to config parameters."""

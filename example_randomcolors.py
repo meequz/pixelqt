@@ -19,5 +19,6 @@ mygame.config['w'] = 120
 mygame.config['h'] = 90
 mygame.config['background'] = (255, 255, 150)
 mygame.config['gl'] = True
+mygame.config['save_each'] = 17
 mygame.init_controls('resolution', 'zoom', 'background', 'gl')
 mygame.run()
