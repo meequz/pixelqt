@@ -4,8 +4,8 @@ import pixelqt
 from random import randint
 
 
-# Function that returns dict if format: {(coordinates): (rgb color)}
-# Other areas will be filled by background color.
+# Function that returns dict in format: {(coordinates): (rgb color)}
+# Other areas will be filled with background color.
 def get_imdata(w, h, frame_count):
     res = {}
     for line in range(h):
@@ -15,16 +15,24 @@ def get_imdata(w, h, frame_count):
     return res
 
 
-# Create game and specify function that will be called periodically.
+# Create main instance and specify function that will be called periodically.
 mygame = pixelqt.Game(draw_func=get_imdata)
+
 
 # Set your own default options. No one is required.
 # If you don't set them, the defaults will be used.
+
+# Window title
 mygame.config['name'] = 'Almost random colors'
+# Width
 mygame.config['w'] = 120
+# Height
 mygame.config['h'] = 90
+# Background color
 mygame.config['background'] = (255, 255, 150)
+# Enable/Disable OpenGL in drawing
 mygame.config['gl'] = True
+# Save each N frame into file (get screenshot)
 mygame.config['save_each'] = 17
 
 # Add controls which you want to see in game's window.
