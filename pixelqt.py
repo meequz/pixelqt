@@ -48,7 +48,9 @@ class Game():
         on each frame drawing.
         """
         self.actions.set_name()
-        self.actions.set_gl()
+        
+        if self.config['gl']:
+            self.actions.set_gl(qc.Qt.Checked)
         
         self.field.timer.start()
         sys.exit(self.app.exec_())
@@ -112,6 +114,9 @@ class Widget(qg.QWidget):
         if 'background' in args:
             hbox_background = self.game.controls.background()
             self.vbox_right.addLayout(hbox_background)
+        if 'gl' in args:
+            hbox_gl = self.game.controls.gl()
+            self.vbox_right.addLayout(hbox_gl)
 
 
 class Field(qg.QGraphicsView):
@@ -204,11 +209,13 @@ class Actions():
             color = col.getRgb()[:3]
             self.game.config['background'] = color
     
-    def set_gl(self):
-        if self.game.config['gl']:
+    def set_gl(self, state):
+        if state == qc.Qt.Checked:
             self.game.field.setViewport(QtOpenGL.QGLWidget())
+            self.game.config['gl'] = True
         else:
             self.game.field.setViewport(qg.QWidget())
+            self.game.config['gl'] = False
 
 
 class Controls():
@@ -276,3 +283,14 @@ class Controls():
         hbox_background.addWidget(btn_background)
         
         return hbox_background
+    
+    def gl(self):
+        checkbox_gl = qg.QCheckBox('Use OpenGL')
+        if self.game.config['gl']:
+            checkbox_gl.toggle()
+        checkbox_gl.stateChanged.connect(self.game.actions.set_gl)
+        
+        hbox_gl = qg.QHBoxLayout()
+        hbox_gl.addWidget(checkbox)
+        
+        return hbox_gl
