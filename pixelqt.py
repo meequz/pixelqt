@@ -291,6 +291,6 @@ class Controls():
         checkbox_gl.stateChanged.connect(self.game.actions.set_gl)
         
         hbox_gl = qg.QHBoxLayout()
-        hbox_gl.addWidget(checkbox)
+        hbox_gl.addWidget(checkbox_gl)
         
         return hbox_gl
