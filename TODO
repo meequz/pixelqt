@@ -3,18 +3,15 @@ General
 - action and control for invert colors
 - action and control for label on top of saving image (name and frame number)
 
-Bugs and support
-- add command to install dependencies to readme, at least for Debian/Ubuntu
-- fix bug with strange drawing on some resolutions, e.g. 150x120 
-
 Controls
-- scroll in vbox_right
 - place controls to window considering to order of initialising
 - method to adding own parameters (see below)
 - button for hide/show vbox_right
 - view background color on Choose button
+- scroll in vbox_right
 - list with field presets
 - blind grid control when zoom < 3
+- add tooltips to all controls
 
 Field and drawing
 - fit size of window to field's size on start
@@ -23,12 +20,17 @@ Field and drawing
 - fullscreen mode, switching by double click in field, or with F11
 - optimize draw if possible
 
-Not sure
+Bugs and support
+- add install dependencies command to readme, at least for Debian/Ubuntu
+- fix bug with strange drawing on some resolutions, e.g. 150x120 
+- ? check if works on mswindows and fix if not
+
+Not sure if needed
+- add default window icon and config key to add own
+- buttons to save/load config - may be useful if many own parameters added
+- 'save screen' button
 - ? method to adding own hbox'es
-- ? buttons to save/load config - may be useful if many own parameters added
 - ? active/inactive (blind) controls
-- ? add default window icon and config key to add own
-- ? 'save screen' button
 - ? popup when incorrect values are set
 
 
@@ -37,3 +39,4 @@ Types of own game parameters:
 	bool: checkbox
 	choice: list with choices
 Arguments required for any parameter: name, default state, need to restart or not
+Own (game) parameters must be visually separated from control parameters
