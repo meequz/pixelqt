@@ -16,6 +16,7 @@
 - ? method to adding own hbox'es
 - ? buttons to save/load config
 - ? active/inactive (blind) controls
+- ? add default window icon and config key to add own
 
 
 possible own parameters:
