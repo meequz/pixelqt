@@ -129,6 +129,9 @@ class Widget(qg.QWidget):
         if 'save_each' in args:
             hbox_save_each = self.game.controls.save_each()
             self.vbox_right.addLayout(hbox_save_each)
+        if 'invert_colors' in args:
+            hbox_invert_colors = self.game.controls.invert_colors()
+            self.vbox_right.addLayout(hbox_invert_colors)
 
 
 class Field(qg.QGraphicsView):
@@ -158,6 +161,8 @@ class Field(qg.QGraphicsView):
             imdata[coords[0]][coords[1]] = drawdata[coords]
         
         imdata = numpy.uint8(imdata)
+        if self.game.config['invert_colors']:
+            imdata = 255 - imdata
         
         qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
         self.qpix = qg.QPixmap(w, h)
@@ -264,6 +269,12 @@ class Actions():
     def set_draw_each(self):
         draw_each_number = self.game.win.sender().value()
         self.game.config['draw_each'] = draw_each_number
+    
+    def set_invert_colors(self, state):
+        if state == qc.Qt.Checked:
+            self.game.config['invert_colors'] = True
+        else:
+            self.game.config['invert_colors'] = False
 
 
 class Controls():
@@ -366,3 +377,14 @@ class Controls():
         hbox_draw_each.addWidget(spin_draw_each)
         
         return hbox_draw_each
+    
+    def invert_colors(self):
+        checkbox_invert_colors = qg.QCheckBox('Invert colors')
+        if self.game.config['invert_colors']:
+            checkbox_invert_colors.toggle()
+        checkbox_invert_colors.stateChanged.connect(self.game.actions.set_invert_colors)
+        
+        hbox_invert_colors = qg.QHBoxLayout()
+        hbox_invert_colors.addWidget(checkbox_invert_colors)
+        
+        return hbox_invert_colors

@@ -34,9 +34,11 @@ mygame.config['background'] = (255, 255, 150)
 mygame.config['gl'] = True
 # Save each N frame into file (get screenshot)
 mygame.config['save_each'] = 17
+# Invert colors or not
+mygame.config['invert_colors'] = True
 
 # Add controls which you want to see in game's window.
-mygame.init_controls('resolution', 'zoom', 'background', 'gl')
+mygame.init_controls('resolution', 'zoom', 'background', 'gl', 'invert_colors')
 
 # Run the simulation.
 mygame.run()
