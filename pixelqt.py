@@ -119,6 +119,9 @@ class Widget(qg.QWidget):
         if 'gl' in args:
             hbox_gl = self.game.controls.gl()
             self.vbox_right.addLayout(hbox_gl)
+        if 'save_each' in args:
+            hbox_save_each = self.game.controls.save_each()
+            self.vbox_right.addLayout(hbox_save_each)
 
 
 class Field(qg.QGraphicsView):
@@ -246,6 +249,10 @@ class Actions():
         else:
             self.game.field.setViewport(qg.QWidget())
             self.game.config['gl'] = False
+    
+    def set_save_each(self):
+        save_each_number = self.game.win.sender().value()
+        self.game.config['save_each'] = save_each_number
 
 
 class Controls():
@@ -324,3 +331,15 @@ class Controls():
         hbox_gl.addWidget(checkbox_gl)
         
         return hbox_gl
+    
+    def save_each(self):
+        label_save_each = qg.QLabel('Save each X frame')
+        spin_save_each = qg.QSpinBox()
+        spin_save_each.setValue(self.game.config['save_each'])
+        spin_save_each.valueChanged[str].connect(self.game.actions.set_save_each)
+        
+        hbox_save_each = qg.QHBoxLayout()
+        hbox_save_each.addWidget(label_save_each)
+        hbox_save_each.addWidget(spin_save_each)
+        
+        return hbox_save_each
