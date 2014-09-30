@@ -90,17 +90,21 @@ class Widget(qg.QWidget):
     def init_ui(self):
         btn_pause_or_play = self.game.controls.button_pause_or_play()
         btn_restart = self.game.controls.button_restart()
-        self.bottom_btns = qg.QHBoxLayout()        # bottom buttons
+        
+        # bottom buttons
+        self.bottom_btns = qg.QHBoxLayout()
         self.bottom_btns.addWidget(btn_pause_or_play)
         self.bottom_btns.addWidget(btn_restart)
         
-        self.vbox_left = qg.QVBoxLayout()        # left vbox with graphics and buttons
+        # left vbox with graphics and buttons
+        self.vbox_left = qg.QVBoxLayout()
         self.vbox_left.addWidget(self.game.field)
         self.vbox_left.addLayout(self.bottom_btns)
         
-        self.vbox_right = qg.QVBoxLayout()        # right vbox with controls
+        # right vbox with controls
+        self.vbox_right = qg.QVBoxLayout()
         
-        #~ global horizontal box with two vertical boxes
+        # global horizontal box with two vertical boxes
         self.global_hbox = qg.QHBoxLayout()
         self.global_hbox.addLayout(self.vbox_left, 1)
         self.global_hbox.addLayout(self.vbox_right)
@@ -138,7 +142,7 @@ class Field(qg.QGraphicsView):
         self.scene = qg.QGraphicsScene()
         self.setScene(self.scene)
         
-        self.timer=qc.QTimer()                        # timer
+        self.timer=qc.QTimer()                         # timer
         self.timer.timeout.connect(self.draw_frame)    # when it triggers, it calls the draw_frame method
     
     def draw_frame(self):
