@@ -216,9 +216,15 @@ class Actions():
         sender = self.game.win.sender()
         text = sender.text()
         if sender is self.game.controls.w_lineedit:
-            self.game.newconfig['w'] = int(text)
+            try:
+                self.game.newconfig['w'] = int(text)
+            except ValueError:
+                self.game.newconfig['w'] = self.game.config['w']
         elif sender is self.game.controls.h_lineedit:
-            self.game.newconfig['h'] = int(text)
+            try:
+                self.game.newconfig['h'] = int(text)
+            except ValueError:
+                self.game.newconfig['h'] = self.game.config['h']
         else:
             print('oops!')
     
