@@ -25,8 +25,8 @@ class GoL():
                 
                 if n == 3:
                     new[line][col] = 1
-                elif n == 2  and  self.matrix[line][col]:
-                    pass    # because the cell already alive
+                elif n == 2:
+                    pass    # the cell is not changed
                 else:
                     new[line][col] = 0
         
