@@ -6,6 +6,7 @@
 - popup when incorrect values are set
 - grid on/off when zoom >= 3
 - invert colors
+- place controls to window considering to order of initialising
 - method to adding own parameters
 - hide/show vbox_right
 - fullscreen mode, switching by double click if field or F11
