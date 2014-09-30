@@ -12,14 +12,14 @@ import os
 
 class Game():
     """Creates all classes and config."""
-    def __init__(self, draw_func):
+    def __init__(self, get_drawdata):
         self.config = self.get_default_config()
         self.newconfig = {}
         
         self.frame_count = 0
         self.state = 'running'
         
-        self.draw_func = draw_func
+        self.get_drawdata = get_drawdata
         self.app = qg.QApplication(sys.argv)
         
         self.field = Field(game_instance=self)
@@ -145,47 +145,50 @@ class Field(qg.QGraphicsView):
         self.scene = qg.QGraphicsScene()
         self.setScene(self.scene)
         
-        self.timer=qc.QTimer()                         # timer
-        self.timer.timeout.connect(self.draw_frame)    # when it triggers, it calls the draw_frame method
+        self.timer=qc.QTimer()                            # timer
+        self.timer.timeout.connect(self.operate_frame)    # when it triggers, it calls the draw_frame method
     
-    def draw_frame(self):
+    def operate_frame(self):
         w = self.game.config['w']
         h = self.game.config['h']
-        zoom = self.game.config['zoom']
-        
         line = numpy.array([self.game.config['background']] * w)
         imdata = numpy.array([line] * h)
+        drawdata = self.game.get_drawdata(w, h, self.game.frame_count)
         
-        drawdata = self.game.draw_func(w, h, self.game.frame_count)
-        for coords in drawdata:
-            imdata[coords[0]][coords[1]] = drawdata[coords]
-        
-        imdata = numpy.uint8(imdata)
-        if self.game.config['invert_colors']:
-            imdata = 255 - imdata
-        
-        qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
-        self.qpix = qg.QPixmap(w, h)
-        self.qpix.convertFromImage(qimage)
-        
-        # Save
         try:
-            if self.game.frame_count % self.game.config['save_each'] == 0:
-                self.save_frame()
+            will_save = self.game.frame_count % self.game.config['save_each'] == 0
         except ZeroDivisionError:
-            pass
-        
-        # Draw
-        self.qpix = self.qpix.scaled(self.qpix.size()*zoom, qc.Qt.KeepAspectRatio)
+            will_save = False
         try:
-            if self.game.frame_count % self.game.config['draw_each'] == 0:
-                self.scene.clear()
-                self.scene.addPixmap(self.qpix)
+            will_draw = self.game.frame_count % self.game.config['draw_each'] == 0
         except ZeroDivisionError:
-            pass
+            will_draw = False
+        
+        if will_save or will_draw:
+            for coords in drawdata:
+                imdata[coords[0]][coords[1]] = drawdata[coords]
+            
+            imdata = numpy.uint8(imdata)
+            # TODO: apply inverting only to displaying, not to saving
+            if self.game.config['invert_colors']:
+                imdata = 255 - imdata
+            
+            qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
+            self.qpix = qg.QPixmap(w, h)
+            self.qpix.convertFromImage(qimage)
+        
+        if will_save:
+            self.save_frame()
+        if will_draw:
+            self.draw_frame()
         
         self.game.frame_count += 1
         self.game.win.set_status()
+    
+    def draw_frame(self):
+        qpix = self.qpix.scaled(self.qpix.size()*self.game.config['zoom'], qc.Qt.KeepAspectRatio)
+        self.scene.clear()
+        self.scene.addPixmap(qpix)
     
     def save_frame(self):
         directory = 'screenshots'

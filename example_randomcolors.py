@@ -6,7 +6,7 @@ from random import randint
 
 # Function that returns dict in format: {(coordinates): (rgb color)}
 # Other areas will be filled with background color.
-def get_imdata(w, h, frame_count):
+def get_drawdata(w, h, frame_count):
     res = {}
     for line in range(h):
         for col in range(w):
@@ -16,7 +16,7 @@ def get_imdata(w, h, frame_count):
 
 
 # Create main instance and specify function that will be called periodically.
-mygame = pixelqt.Game(draw_func=get_imdata)
+mygame = pixelqt.Game(get_drawdata=get_drawdata)
 
 
 # Set your own default options. No one is required.
