@@ -51,9 +51,9 @@ class GoL():
 
 def get_imdata(w, h, frame_count):
     res = {}
-    life.w, life.h = w, h
     
     if frame_count == 0:
+        life.w, life.h = w, h
         life.generate_random()
     else:
         life.compute()

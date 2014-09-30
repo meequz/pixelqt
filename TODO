@@ -9,6 +9,7 @@
 - method to adding own parameters
 - hide/show vbox_right
 - fullscreen mode, switching by double click if field or F11
+- view background color on Choose button
 - field presets
 - optimize draw if possible
 - label on saving image (name and frame number)
