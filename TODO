@@ -1,26 +1,32 @@
-- scroll in vbox_right
-- draw each X frame
-- save each X frame
-- fit size of window to field's size on start
-- 'save screen' button
-- popup when incorrect values are set
-- grid on/off when zoom >= 3
+- grid on/off
 - invert colors
+- label on top of saving image (name and frame number)
+
+- fix bug with strange drawing on some resolution, e.g. 150x120 
+
+- scroll in vbox_right
 - place controls to window considering to order of initialising
 - method to adding own parameters
 - hide/show vbox_right
-- fullscreen mode, switching by double click if field or F11
 - view background color on Choose button
 - field presets
+- blind grid control when zoom < 3
+
+- fit size of window to field's size on start
+- add centering in field on actions.start() and changing zoom
+- fullscreen mode, switching by double click in field, or with F11
 - optimize draw if possible
-- label on saving image (name and frame number)
+
 - ? method to adding own hbox'es
 - ? buttons to save/load config
 - ? active/inactive (blind) controls
 - ? add default window icon and config key to add own
+- ? 'save screen' button
+- ? popup when incorrect values are set
 
 
-possible own parameters:
-	numbers: name, start, finish, step, default
-	bool: name, default
-	choice: name, list, default
+Types of own game parameters:
+	numbers: spinbox (start, finish, step)
+	bool: checkbox
+	choice: list with choices
+Arguments required for any parameter: name, default state, need to restart or not
