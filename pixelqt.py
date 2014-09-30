@@ -119,6 +119,9 @@ class Widget(qg.QWidget):
         if 'gl' in args:
             hbox_gl = self.game.controls.gl()
             self.vbox_right.addLayout(hbox_gl)
+        if 'draw_each' in args:
+            hbox_draw_each = self.game.controls.draw_each()
+            self.vbox_right.addLayout(hbox_draw_each)
         if 'save_each' in args:
             hbox_save_each = self.game.controls.save_each()
             self.vbox_right.addLayout(hbox_save_each)
@@ -253,6 +256,10 @@ class Actions():
     def set_save_each(self):
         save_each_number = self.game.win.sender().value()
         self.game.config['save_each'] = save_each_number
+    
+    def set_draw_each(self):
+        draw_each_number = self.game.win.sender().value()
+        self.game.config['draw_each'] = draw_each_number
 
 
 class Controls():
@@ -343,3 +350,15 @@ class Controls():
         hbox_save_each.addWidget(spin_save_each)
         
         return hbox_save_each
+    
+    def draw_each(self):
+        label_draw_each = qg.QLabel('Draw each X frame')
+        spin_draw_each = qg.QSpinBox()
+        spin_draw_each.setValue(self.game.config['draw_each'])
+        spin_draw_each.valueChanged[str].connect(self.game.actions.set_draw_each)
+        
+        hbox_draw_each = qg.QHBoxLayout()
+        hbox_draw_each.addWidget(label_draw_each)
+        hbox_draw_each.addWidget(spin_draw_each)
+        
+        return hbox_draw_each
