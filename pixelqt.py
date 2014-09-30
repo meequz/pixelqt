@@ -167,18 +167,20 @@ class Field(qg.QGraphicsView):
         qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
         self.qpix = qg.QPixmap(w, h)
         self.qpix.convertFromImage(qimage)
-        self.qpix = self.qpix.scaled(self.qpix.size()*zoom, qc.Qt.KeepAspectRatio)
         
-        # Draw and save if need
+        # Save
+        try:
+            if self.game.frame_count % self.game.config['save_each'] == 0:
+                self.save_frame()
+        except ZeroDivisionError:
+            pass
+        
+        # Draw
+        self.qpix = self.qpix.scaled(self.qpix.size()*zoom, qc.Qt.KeepAspectRatio)
         try:
             if self.game.frame_count % self.game.config['draw_each'] == 0:
                 self.scene.clear()
                 self.scene.addPixmap(self.qpix)
-        except ZeroDivisionError:
-            pass
-        try:
-            if self.game.frame_count % self.game.config['save_each'] == 0:
-                self.save_frame()
         except ZeroDivisionError:
             pass
         
