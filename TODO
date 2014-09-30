@@ -1,6 +1,7 @@
 General
 - action and control for grid on/off
 - action and control for label on top of saving image (name and frame number)
+- make draw_each really save CPU time, not as small as now
 
 Controls
 - place controls to window considering to order of initialising
@@ -22,6 +23,7 @@ Field and drawing
 Bugs and support
 - add install dependencies command to readme, at least for Debian/Ubuntu
 - fix bug with strange drawing on some resolutions, e.g. 150x120 
+- analize similar pieces of code and move this functionality to special methods
 - ? check if works on mswindows and fix if not
 
 Not sure if needed
