@@ -157,6 +157,8 @@ class Field(qg.QGraphicsView):
         self.scene.setBackgroundBrush(qc.Qt.gray)
         self.setScene(self.scene)
         
+        self.setDragMode(self.ScrollHandDrag)
+        
         # when timer triggers, it calls the operate_frame method
         self.timer=qc.QTimer()
         self.timer.timeout.connect(self.operate_frame)
