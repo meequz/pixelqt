@@ -118,27 +118,31 @@ class Widget(qg.QWidget):
         self.setLayout(self.global_hbox)
     
     def init_controls(self, *args):
-        if 'resolution' in args:
-            hbox_res = self.game.controls.resolution()
-            self.vbox_right.addLayout(hbox_res)
-        if 'zoom' in args:
-            hbox_zoom = self.game.controls.zoom()
-            self.vbox_right.addLayout(hbox_zoom)
-        if 'background' in args:
-            hbox_background = self.game.controls.background()
-            self.vbox_right.addLayout(hbox_background)
-        if 'gl' in args:
-            hbox_gl = self.game.controls.gl()
-            self.vbox_right.addLayout(hbox_gl)
-        if 'draw_each' in args:
-            hbox_draw_each = self.game.controls.draw_each()
-            self.vbox_right.addLayout(hbox_draw_each)
-        if 'save_each' in args:
-            hbox_save_each = self.game.controls.save_each()
-            self.vbox_right.addLayout(hbox_save_each)
-        if 'invert_colors' in args:
-            hbox_invert_colors = self.game.controls.invert_colors()
-            self.vbox_right.addLayout(hbox_invert_colors)
+        if len(args) != len(set(args)):
+            print('You added the same control twice or more. The program may work incorrectly.')
+        
+        for arg in args:
+            if arg == 'resolution':
+                hbox_res = self.game.controls.resolution()
+                self.vbox_right.addLayout(hbox_res)
+            if arg == 'zoom':
+                hbox_zoom = self.game.controls.zoom()
+                self.vbox_right.addLayout(hbox_zoom)
+            if arg == 'background':
+                hbox_background = self.game.controls.background()
+                self.vbox_right.addLayout(hbox_background)
+            if arg == 'gl':
+                hbox_gl = self.game.controls.gl()
+                self.vbox_right.addLayout(hbox_gl)
+            if arg == 'draw_each':
+                hbox_draw_each = self.game.controls.draw_each()
+                self.vbox_right.addLayout(hbox_draw_each)
+            if arg == 'save_each':
+                hbox_save_each = self.game.controls.save_each()
+                self.vbox_right.addLayout(hbox_save_each)
+            if arg == 'invert_colors':
+                hbox_invert_colors = self.game.controls.invert_colors()
+                self.vbox_right.addLayout(hbox_invert_colors)
 
 
 class Field(qg.QGraphicsView):

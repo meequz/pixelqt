@@ -3,7 +3,6 @@ General
 - action and control for label on top of saving image (name and frame number)
 
 Controls
-- place controls to window considering to order of initialising
 - method to adding own parameters (see below)
 - button for hide/show vbox_right
 - view background color on Choose button
