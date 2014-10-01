@@ -12,7 +12,6 @@ Controls
 - add tooltips to all controls
 
 Field and drawing
-- add centering in field on actions.start() and changing zoom
 - fullscreen mode, switching by double click in field, or with F11
 - optimize draw if possible
 

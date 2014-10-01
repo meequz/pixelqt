@@ -49,18 +49,18 @@ class Game():
         """Perform actions that are not takes from config
         on each frame drawing.
         """
-        # Preparing
+        # preparing
         self.actions.set_name()
         if self.config['gl']:
             self.actions.set_gl(qc.Qt.Checked)
         
-        # Fit window size. TODO: make it properly
+        # fit window size. TODO: make it properly
         fitsize = self.win.sizeHint() +\
             qc.QSize(self.config['w']*self.config['zoom'] + 40,
             self.config['h']*self.config['zoom'] - 50)
         self.win.resize(fitsize)
         
-        # Actual start
+        # actual start
         self.field.start()
         sys.exit(self.app.exec_())
         
@@ -95,10 +95,11 @@ class Widget(qg.QWidget):
         self.init_ui()
     
     def init_ui(self):
+        # create bottom buttons
         btn_pause_or_play = self.game.controls.button_pause_or_play()
         btn_restart = self.game.controls.button_restart()
         
-        # bottom buttons
+        # add bottom buttons to layout
         self.bottom_btns = qg.QHBoxLayout()
         self.bottom_btns.addWidget(btn_pause_or_play)
         self.bottom_btns.addWidget(btn_restart)
@@ -119,12 +120,12 @@ class Widget(qg.QWidget):
     
     def init_controls(self, *args):
         if len(args) != len(set(args)):
-            print('You added the same control twice or more. The program may work incorrectly.')
+            print('You added the same control twice or more. They may work incorrectly.')
         
         for arg in args:
             if arg == 'resolution':
-                hbox_res = self.game.controls.resolution()
-                self.vbox_right.addLayout(hbox_res)
+                vbox_resolution = self.game.controls.resolution()
+                self.vbox_right.addLayout(vbox_resolution)
             if arg == 'zoom':
                 hbox_zoom = self.game.controls.zoom()
                 self.vbox_right.addLayout(hbox_zoom)
@@ -153,6 +154,7 @@ class Field(qg.QGraphicsView):
         super(Field, self).__init__()
         self.game = game_instance
         
+        # create scene
         self.scene = qg.QGraphicsScene()
         self.scene.setBackgroundBrush(qc.Qt.gray)
         self.setScene(self.scene)
@@ -174,6 +176,7 @@ class Field(qg.QGraphicsView):
         self.game.win.set_status()
     
     def generate_basis(self):
+        # generate base image with background
         line = numpy.array([self.game.config['background']] * self.game.config['w'])
         basis = numpy.array([line] * self.game.config['h'])
         self.basis = numpy.uint8(basis)
@@ -234,10 +237,10 @@ class Field(qg.QGraphicsView):
         self.scene.addPixmap(qpix)
     
     def center_scene(self):
-        qim_w = self.game.config['w']
-        qim_h = self.game.config['h']
+        w = self.game.config['w']
+        h = self.game.config['h']
         zoom = self.game.config['zoom']
-        self.scene.setSceneRect(0, 0, qim_w*zoom, qim_h*zoom)
+        self.scene.setSceneRect(0, 0, w*zoom, h*zoom)
 
 
 class Actions():
@@ -253,6 +256,7 @@ class Actions():
             self.game.field.start()
     
     def restart(self):
+        # update config
         for key in self.game.newconfig:
             self.game.config[key] = self.game.newconfig[key]
         self.game.newconfig = {}
@@ -318,9 +322,7 @@ class Actions():
 
 
 class Controls():
-    """Contains base hboxes, connects them with actions
-    and adds to vbox_right.
-    """
+    """Contains base horizontal boxes and connects their widgets with actions"""
     def __init__(self, game_instance):
         self.game = game_instance
     
@@ -354,11 +356,11 @@ class Controls():
         hbox_w.addWidget(self.w_lineedit)
         hbox_h.addWidget(self.h_lineedit)
         
-        vbox = qg.QVBoxLayout()
-        vbox.addLayout(hbox_w)
-        vbox.addLayout(hbox_h)
+        vbox_resolution = qg.QVBoxLayout()
+        vbox_resolution.addLayout(hbox_w)
+        vbox_resolution.addLayout(hbox_h)
         
-        return vbox
+        return vbox_resolution
     
     def zoom(self):
         label_zoom = qg.QLabel('Zoom:')
