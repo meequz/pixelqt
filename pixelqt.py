@@ -232,6 +232,12 @@ class Field(qg.QGraphicsView):
         qpix = qpix.scaled(qpix.size()*self.game.config['zoom'], qc.Qt.KeepAspectRatio)
         self.scene.clear()
         self.scene.addPixmap(qpix)
+    
+    def center_scene(self):
+        qim_w = self.game.config['w']
+        qim_h = self.game.config['h']
+        zoom = self.game.config['zoom']
+        self.scene.setSceneRect(0, 0, qim_w*zoom, qim_h*zoom)
 
 
 class Actions():
@@ -247,11 +253,11 @@ class Actions():
             self.game.field.start()
     
     def restart(self):
-        # TODO: add centering in field
         for key in self.game.newconfig:
             self.game.config[key] = self.game.newconfig[key]
         self.game.newconfig = {}
         
+        self.game.field.center_scene()
         self.game.frame_count = 0
         self.game.field.start()
     
@@ -275,9 +281,11 @@ class Actions():
             print('oops!')
     
     def set_zoom(self):
-        # TODO: add centering in field
         zoom_factor = self.game.win.sender().value()
         self.game.config['zoom'] = zoom_factor
+        # hack?
+        if self.game.field.timer.isActive():
+            self.game.field.center_scene()
     
     def set_background(self):
         col = qg.QColorDialog.getColor()
