@@ -182,14 +182,7 @@ class Field(qg.QGraphicsView):
         if will_save or will_draw:
             for coords in drawdata:
                 imdata[coords[0]][coords[1]] = drawdata[coords]
-            
-            # TODO: apply inverting only to displaying, not to saving
-            if self.game.config['invert_colors']:
-                imdata = 255 - imdata
-            
-            qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
-            self.qpix = qg.QPixmap(w, h)
-            self.qpix.convertFromImage(qimage)
+            self.qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
         
         if will_save:
             self.save_frame()
@@ -199,22 +192,32 @@ class Field(qg.QGraphicsView):
         self.game.frame_count += 1
         self.game.win.set_status()
     
-    def draw_frame(self):
-        qpix = self.qpix.scaled(self.qpix.size()*self.game.config['zoom'], qc.Qt.KeepAspectRatio)
-        self.scene.clear()
-        self.scene.addPixmap(qpix)
-    
     def save_frame(self):
+        # check if path exists
         directory = 'screenshots'
         if not os.path.exists(directory):
             os.makedirs(directory)
         
+        # get screenshot filename
         date = datetime.datetime.now().strftime('%G-%m-%d-%H-%M-%S-%f')
         filename = self.game.config['name'] + '_' +\
-            date + '_' +\
-            str(self.game.frame_count) + '.png'
+                    date + '_' +\
+                    str(self.game.frame_count) + '.png'
         
-        self.qpix.save(directory + '/' + filename)
+        # convert and save
+        qpix = qg.QPixmap(self.qimage)
+        qpix.save(directory + '/' + filename)
+    
+    def draw_frame(self):
+        # invert colors
+        if self.game.config['invert_colors']:
+            self.qimage.invertPixels()
+        
+        # convert to qpixmap, scale and draw
+        qpix = qg.QPixmap(self.qimage)
+        qpix = qpix.scaled(qpix.size()*self.game.config['zoom'], qc.Qt.KeepAspectRatio)
+        self.scene.clear()
+        self.scene.addPixmap(qpix)
 
 
 class Actions():
