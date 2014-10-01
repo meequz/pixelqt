@@ -13,7 +13,6 @@ Controls
 - add tooltips to all controls
 
 Field and drawing
-- fit size of window to field's size on start
 - add centering in field on actions.start() and changing zoom
 - fill the area around frame with grey color instead of white
 - fullscreen mode, switching by double click in field, or with F11

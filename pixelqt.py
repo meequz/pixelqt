@@ -49,11 +49,18 @@ class Game():
         """Perform actions that are not takes from config
         on each frame drawing.
         """
+        # Preparing
         self.actions.set_name()
-        
         if self.config['gl']:
             self.actions.set_gl(qc.Qt.Checked)
         
+        # Fit window size. TODO: make it properly
+        fitsize = self.win.sizeHint() +\
+            qc.QSize(self.config['w']*self.config['zoom'] + 40,
+            self.config['h']*self.config['zoom'] - 50)
+        self.win.resize(fitsize)
+        
+        # Actual start
         self.field.start()
         sys.exit(self.app.exec_())
         
