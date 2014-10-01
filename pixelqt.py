@@ -150,6 +150,7 @@ class Field(qg.QGraphicsView):
         self.game = game_instance
         
         self.scene = qg.QGraphicsScene()
+        self.scene.setBackgroundBrush(qc.Qt.gray)
         self.setScene(self.scene)
         
         # when timer triggers, it calls the operate_frame method
