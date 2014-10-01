@@ -54,7 +54,7 @@ class Game():
         if self.config['gl']:
             self.actions.set_gl(qc.Qt.Checked)
         
-        self.field.timer.start()
+        self.field.start()
         sys.exit(self.app.exec_())
         
 
@@ -145,14 +145,29 @@ class Field(qg.QGraphicsView):
         self.scene = qg.QGraphicsScene()
         self.setScene(self.scene)
         
-        self.timer=qc.QTimer()                            # timer
-        self.timer.timeout.connect(self.operate_frame)    # when it triggers, it calls the draw_frame method
+        # when timer triggers, it calls the operate_frame method
+        self.timer=qc.QTimer()
+        self.timer.timeout.connect(self.operate_frame)
+    
+    def start(self):
+        self.generate_basis()
+        self.game.state = 'running'
+        self.timer.start()
+    
+    def stop(self):
+        self.timer.stop()
+        self.game.state = 'pause'
+        self.game.win.set_status()
+    
+    def generate_basis(self):
+        line = numpy.array([self.game.config['background']] * self.game.config['w'])
+        basis = numpy.array([line] * self.game.config['h'])
+        self.basis = numpy.uint8(basis)
     
     def operate_frame(self):
         w = self.game.config['w']
         h = self.game.config['h']
-        line = numpy.array([self.game.config['background']] * w)
-        imdata = numpy.array([line] * h)
+        imdata = self.basis.copy()
         drawdata = self.game.get_drawdata(w, h, self.game.frame_count)
         
         try:
@@ -168,7 +183,6 @@ class Field(qg.QGraphicsView):
             for coords in drawdata:
                 imdata[coords[0]][coords[1]] = drawdata[coords]
             
-            imdata = numpy.uint8(imdata)
             # TODO: apply inverting only to displaying, not to saving
             if self.game.config['invert_colors']:
                 imdata = 255 - imdata
@@ -209,16 +223,11 @@ class Actions():
         self.game = game_instance
     
     def pause_or_play(self):
+        # self.game.state may be bugged, but timer is never
         if self.game.field.timer.isActive():
-            self.game.field.timer.stop()
-            self.game.state = 'pause'
-            self.game.win.set_status()
+            self.game.field.stop()
         else:
-            self.game.actions.start()
-    
-    def start(self):
-        self.game.field.timer.start()
-        self.game.state = 'running'
+            self.game.field.start()
     
     def restart(self):
         # TODO: add centering in field
@@ -227,7 +236,7 @@ class Actions():
         self.game.newconfig = {}
         
         self.game.frame_count = 0
-        self.game.actions.start()
+        self.game.field.start()
     
     def set_name(self):
         self.game.win.setWindowTitle(self.game.config['name'])
@@ -258,6 +267,7 @@ class Actions():
         if col.isValid():
             color = col.getRgb()[:3]
             self.game.config['background'] = color
+            self.game.field.generate_basis()
     
     def set_gl(self, state):
         if state == qc.Qt.Checked:
