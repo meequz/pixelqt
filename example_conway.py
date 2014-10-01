@@ -41,8 +41,7 @@ class GoL():
         
         for coos in n_coos:
             try:
-                if self.matrix[coos[0]][coos[1]]:
-                    res += 1
+                res += self.matrix[coos[0]][coos[1]]
             except IndexError:
                 pass
         
