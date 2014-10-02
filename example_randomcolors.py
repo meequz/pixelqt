@@ -38,7 +38,7 @@ mygame.config['save_each'] = 17
 mygame.config['invert_colors'] = True
 
 # Add controls which you want to see in game's window.
-mygame.init_controls('resolution', 'zoom', 'background', 'gl', 'invert_colors')
+mygame.init_controls('resolution', 'zoom', 'background', 'invert_colors', 'gl')
 
 # Run the simulation.
 mygame.run()
