@@ -15,6 +15,7 @@ class Game():
     def __init__(self, get_drawdata):
         self.config = self.get_default_config()
         self.newconfig = {}
+        self.frame_count = 0
         
         self.get_drawdata = get_drawdata
         self.app = qg.QApplication(sys.argv)
@@ -161,7 +162,6 @@ class Field(qg.QGraphicsView):
         self.timer.timeout.connect(self.operate_frame)
     
     def start(self):
-        self.game.frame_count = 0
         self.game.state = 'running'
         
         self.generate_basis()
@@ -259,6 +259,7 @@ class Actions():
             self.game.config[key] = self.game.newconfig[key]
         self.game.newconfig = {}
         
+        self.game.frame_count = 0
         self.game.field.start()
     
     def set_name(self):
