@@ -13,18 +13,20 @@ import os
 class Game():
     """Creates all classes and config."""
     def __init__(self, get_drawdata):
+        self.game = self
+        self.app = qg.QApplication(sys.argv)
+        
         self.config = self.get_default_config()
         self.newconfig = {}
-        self.frame_count = 0
         
+        self.frame_count = 0
         self.get_drawdata = get_drawdata
-        self.app = qg.QApplication(sys.argv)
         
         self.field = Field(game_instance=self)
         self.controls = Controls(game_instance=self)
         self.actions = Actions(game_instance=self)
-        
         self.win = Window(game_instance=self)
+        
         self.widget = self.win.widget
         self.init_controls = self.win.widget.init_controls
     
@@ -163,9 +165,8 @@ class Field(qg.QGraphicsView):
     
     def start(self):
         self.game.state = 'running'
-        
         self.generate_basis()
-        self.game.field.center_scene()
+        self.center_scene()
         self.timer.start()
     
     def stop(self):

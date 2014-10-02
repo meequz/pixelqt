@@ -1,9 +1,9 @@
 General
+- ! method to adding own parameters (see below)
 - action and control for grid on/off
 - action and control for label on top of saving image (name and frame number)
 
 Controls
-- method to adding own parameters (see below)
 - button for hide/show vbox_right
 - scroll in vbox_right
 - list with field presets
