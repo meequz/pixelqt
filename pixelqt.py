@@ -297,6 +297,9 @@ class Actions():
             color = col.getRgb()[:3]
             self.game.config['background'] = color
             self.game.field.generate_basis()
+        palette = qg.QPalette()
+        palette.setColor(qg.QPalette.Button, col)
+        self.game.controls.btn_background.setPalette(palette)
     
     def set_gl(self, state):
         if state == qc.Qt.Checked:
@@ -376,12 +379,12 @@ class Controls():
     
     def background(self):
         label_background = qg.QLabel('Background:')
-        btn_background = qg.QPushButton('Choose')
-        btn_background.clicked.connect(self.game.actions.set_background)
+        self.btn_background = qg.QPushButton('Choose')
+        self.btn_background.clicked.connect(self.game.actions.set_background)
         
         hbox_background = qg.QHBoxLayout()
         hbox_background.addWidget(label_background)
-        hbox_background.addWidget(btn_background)
+        hbox_background.addWidget(self.btn_background)
         
         return hbox_background
     

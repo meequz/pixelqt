@@ -5,7 +5,6 @@ General
 Controls
 - method to adding own parameters (see below)
 - button for hide/show vbox_right
-- view background color on Choose button
 - scroll in vbox_right
 - list with field presets
 - blind grid control when zoom < 3
