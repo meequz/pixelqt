@@ -269,18 +269,18 @@ class Actions():
     def set_resolution(self):
         sender = self.game.win.sender()
         text = sender.text()
+        
         if sender is self.game.controls.w_lineedit:
-            try:
-                self.game.newconfig['w'] = int(text)
-            except ValueError:
-                self.game.newconfig['w'] = self.game.config['w']
+            dimension = 'w'
         elif sender is self.game.controls.h_lineedit:
-            try:
-                self.game.newconfig['h'] = int(text)
-            except ValueError:
-                self.game.newconfig['h'] = self.game.config['h']
+            dimension = 'h'
         else:
             print('oops!')
+        
+        try:
+            self.game.newconfig[dimension] = int(text)
+        except ValueError:
+            self.game.newconfig[dimension] = self.game.config[dimension]
     
     def set_zoom(self):
         zoom_factor = self.game.win.sender().value()
