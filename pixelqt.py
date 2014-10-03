@@ -382,6 +382,7 @@ class Controls():
     def zoom(self):
         label_zoom = qg.QLabel('Zoom:')
         spin_zoom = qg.QSpinBox()
+        spin_zoom.setMinimum(1)
         spin_zoom.setValue(self.game.config['zoom'])
         spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom)        # str?
         
