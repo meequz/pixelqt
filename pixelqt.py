@@ -18,6 +18,8 @@ class Game():
         
         self.config = self.get_default_config()
         self.newconfig = {}
+        self.own_params = {}
+        self.new_own_params = {}
         
         self.frame_count = 0
         self.get_drawdata = get_drawdata
@@ -29,6 +31,11 @@ class Game():
         
         self.widget = self.win.widget
         self.init_controls = self.win.widget.init_controls
+        
+        self.owns = Owns(game_instance=self)
+        self.add_own_num = self.owns.add_own_num
+        self.add_own_bool = self.owns.add_own_bool
+        self.add_own_choice = self.owns.add_own_choice
     
     def get_default_config(self):
         config = {'name': 'Game is not loaded',
@@ -80,7 +87,8 @@ class Window(qg.QMainWindow):
     
     def set_status(self):
         message = 'Frame ' + str(self.game.frame_count) + ', ' + self.game.state
-        if self.game.newconfig:
+        # TODO: compare new and current dicts to consider only changed values
+        if self.game.newconfig or self.game.new_own_params:
             message += '. Changes will take effect after restart'
         self.statusbar.showMessage(message)
 
@@ -260,6 +268,11 @@ class Actions():
             self.game.config[key] = self.game.newconfig[key]
         self.game.newconfig = {}
         
+        # update own_params
+        for key in self.game.new_own_params:
+            self.game.own_params[key] = self.game.new_own_params[key]
+        self.game.new_own_params = {}
+        
         self.game.frame_count = 0
         self.game.field.start()
     
@@ -436,3 +449,59 @@ class Controls():
         hbox_invert_colors.addWidget(checkbox_invert_colors)
         
         return hbox_invert_colors
+
+class Owns():
+    """Operate controls and actions of own parameters"""
+    def __init__(self, game_instance):
+        self.game = game_instance
+        self.param_widgets = {}
+    
+    
+    def add_own_num(self, name, default, need_to_restart, minimum, maximum, step):
+        label = qg.QLabel(name)
+        spin = qg.QSpinBox()
+        self.param_widgets[spin] = {'name': name}
+        
+        spin.setValue(default)
+        spin.setMinimum(minimum)
+        spin.setMaximum(maximum)
+        spin.setSingleStep(step)
+        
+        if need_to_restart:
+            spin.valueChanged[str].connect(self.num_change_after_restart)
+        else:
+            spin.valueChanged[str].connect(self.num_change)
+        
+        hbox = qg.QHBoxLayout()
+        hbox.addWidget(label)
+        hbox.addWidget(spin)
+        
+        self.game.own_params[name] = default
+        self.game.widget.vbox_right.addLayout(hbox)
+    
+    def num_change(self):
+        sender =self.game.win.sender() 
+        value = sender.value()
+        name = self.param_widgets[sender]['name']
+        self.game.own_params[name] = value
+    
+    def num_change_after_restart(self):
+        sender =self.game.win.sender() 
+        value = sender.value()
+        name = self.param_widgets[sender]['name']
+        self.game.new_own_params[name] = value
+    
+    
+    def add_own_bool(self, name, default, need_to_restart):
+        checkbox = qg.QCheckBox(name)
+        if default:
+            checkbox.toggle()
+        
+        hbox = qg.QHBoxLayout()
+        hbox.addWidget(checkbox)
+        
+        self.game.own_params[name] = default
+        self.game.widget.vbox_right.addLayout(hbox)
+    
+    def add_own_choice(self, name, default, need_to_restart, choice_list):
+        pass
