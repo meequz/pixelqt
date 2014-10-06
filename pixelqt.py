@@ -525,4 +525,30 @@ class Owns():
     
     
     def add_own_choice(self, name, default, need_to_restart, choice_list):
-        pass
+        label = qg.QLabel(name)
+        combo = qg.QComboBox()
+        for item in choice_list:
+            combo.addItem(item)
+        combo.setCurrentIndex(default)
+        combo.activated[str].connect(self.choice_change)
+        
+        self.param_widgets[combo] = {'name': name,
+                                     'default': default,
+                                     'need_to_restart': need_to_restart,
+                                     'choice_list': choice_list}
+        
+        hbox = qg.QHBoxLayout()
+        hbox.addWidget(label)
+        hbox.addWidget(combo)
+        
+        self.game.own_params[name] = choice_list[default]
+        self.game.widget.vbox_right.addLayout(hbox)
+        
+    def choice_change(self, text):
+        sender = self.game.win.sender()
+        name = self.param_widgets[sender]['name']
+        
+        if self.param_widgets[sender]['need_to_restart']:
+            self.game.new_own_params[name] = text
+        else:
+            self.game.own_params[name] = text
