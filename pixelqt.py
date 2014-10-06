@@ -115,8 +115,23 @@ class Widget(qg.QWidget):
         self.vbox_left.addWidget(self.game.field)
         self.vbox_left.addLayout(self.bottom_btns)
         
-        # right vbox with controls
+        # create docks, their widgets and layouts
+        dock_controls = qg.QDockWidget('Controls')
+        dock_controls.setFloating(True)
+        dock_ownparams = qg.QDockWidget('Game parameters')
+        widget_controls = qg.QWidget()
+        widget_ownparams = qg.QWidget()
+        self.layout_controls = qg.QVBoxLayout()
+        self.layout_ownparams = qg.QVBoxLayout()
+        widget_controls.setLayout(self.layout_controls)
+        widget_ownparams.setLayout(self.layout_ownparams)
+        dock_controls.setWidget(widget_controls)
+        dock_ownparams.setWidget(widget_ownparams)
+        
+        # add to vbox_right
         self.vbox_right = qg.QVBoxLayout()
+        self.vbox_right.addWidget(dock_controls)
+        self.vbox_right.addWidget(dock_ownparams)
         
         # global horizontal box with two vertical boxes
         self.global_hbox = qg.QHBoxLayout()
@@ -131,25 +146,25 @@ class Widget(qg.QWidget):
         for arg in args:
             if arg == 'resolution':
                 vbox_resolution = self.game.controls.resolution()
-                self.vbox_right.addLayout(vbox_resolution)
+                self.layout_controls.addLayout(vbox_resolution)
             if arg == 'zoom':
                 hbox_zoom = self.game.controls.zoom()
-                self.vbox_right.addLayout(hbox_zoom)
+                self.layout_controls.addLayout(hbox_zoom)
             if arg == 'background':
                 hbox_background = self.game.controls.background()
-                self.vbox_right.addLayout(hbox_background)
+                self.layout_controls.addLayout(hbox_background)
             if arg == 'gl':
                 hbox_gl = self.game.controls.gl()
-                self.vbox_right.addLayout(hbox_gl)
+                self.layout_controls.addLayout(hbox_gl)
             if arg == 'draw_each':
                 hbox_draw_each = self.game.controls.draw_each()
-                self.vbox_right.addLayout(hbox_draw_each)
+                self.layout_controls.addLayout(hbox_draw_each)
             if arg == 'save_each':
                 hbox_save_each = self.game.controls.save_each()
-                self.vbox_right.addLayout(hbox_save_each)
+                self.layout_controls.addLayout(hbox_save_each)
             if arg == 'invert_colors':
                 hbox_invert_colors = self.game.controls.invert_colors()
-                self.vbox_right.addLayout(hbox_invert_colors)
+                self.layout_controls.addLayout(hbox_invert_colors)
 
 
 class Field(qg.QGraphicsView):
@@ -480,7 +495,7 @@ class Owns():
         hbox.addWidget(spin)
         
         self.game.own_params[name] = default
-        self.game.widget.vbox_right.addLayout(hbox)
+        self.game.widget.layout_ownparams.addLayout(hbox)
     
     def num_change(self):
         sender = self.game.win.sender()
@@ -506,7 +521,7 @@ class Owns():
         hbox.addWidget(checkbox)
         
         self.game.own_params[name] = default
-        self.game.widget.vbox_right.addLayout(hbox)
+        self.game.widget.layout_ownparams.addLayout(hbox)
     
     def bool_change(self, state):
         sender = self.game.win.sender()
@@ -542,7 +557,7 @@ class Owns():
         hbox.addWidget(combo)
         
         self.game.own_params[name] = choice_list[default]
-        self.game.widget.vbox_right.addLayout(hbox)
+        self.game.widget.layout_ownparams.addLayout(hbox)
         
     def choice_change(self, text):
         sender = self.game.win.sender()
