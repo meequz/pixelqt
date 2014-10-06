@@ -34,3 +34,4 @@ Not sure if needed
 Own (in-game) parameters:
 - they must be visually separated from control parameters
 - make 'set default' button on each own param, with arrow icon
+- argument in add_own_* method to set tooltips to own parameters
