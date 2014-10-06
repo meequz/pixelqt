@@ -104,20 +104,24 @@ class Widget(qg.QWidget):
         # create bottom buttons
         btn_pause_or_play = self.game.controls.button_pause_or_play()
         btn_restart = self.game.controls.button_restart()
-        
-        # add bottom buttons to layout
         self.bottom_btns = qg.QHBoxLayout()
         self.bottom_btns.addWidget(btn_pause_or_play)
         self.bottom_btns.addWidget(btn_restart)
         
-        # left vbox with graphics and buttons
+        # create dock with field and buttons
+        dock_field_and_btns = qg.QDockWidget('Field')
+        widget_field_and_btns = qg.QWidget()
         self.vbox_left = qg.QVBoxLayout()
+        widget_field_and_btns.setLayout(self.vbox_left)
+        dock_field_and_btns.setWidget(widget_field_and_btns)
+        dock_field_and_btns.setFeatures(qg.QDockWidget.DockWidgetMovable)
+        
+        # add to it's layout graphics and buttons
         self.vbox_left.addWidget(self.game.field)
         self.vbox_left.addLayout(self.bottom_btns)
         
-        # create docks, their widgets and layouts
+        # create control and ownparams docks, their widgets and layouts
         dock_controls = qg.QDockWidget('Controls')
-        dock_controls.setFloating(True)
         dock_ownparams = qg.QDockWidget('Game parameters')
         widget_controls = qg.QWidget()
         widget_ownparams = qg.QWidget()
@@ -127,15 +131,17 @@ class Widget(qg.QWidget):
         widget_ownparams.setLayout(self.layout_ownparams)
         dock_controls.setWidget(widget_controls)
         dock_ownparams.setWidget(widget_ownparams)
+        dock_controls.setFeatures(qg.QDockWidget.DockWidgetMovable)
+        dock_ownparams.setFeatures(qg.QDockWidget.DockWidgetMovable)
         
-        # add to vbox_right
+        # right vbox with controls and own parameters
         self.vbox_right = qg.QVBoxLayout()
         self.vbox_right.addWidget(dock_controls)
         self.vbox_right.addWidget(dock_ownparams)
         
         # global horizontal box with two vertical boxes
         self.global_hbox = qg.QHBoxLayout()
-        self.global_hbox.addLayout(self.vbox_left, 1)
+        self.global_hbox.addWidget(dock_field_and_btns, 1)
         self.global_hbox.addLayout(self.vbox_right)
         self.setLayout(self.global_hbox)
     
