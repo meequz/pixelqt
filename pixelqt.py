@@ -483,7 +483,7 @@ class Owns():
         self.game.widget.vbox_right.addLayout(hbox)
     
     def num_change(self):
-        sender =self.game.win.sender() 
+        sender = self.game.win.sender()
         value = sender.value()
         name = self.param_widgets[sender]['name']
         if self.param_widgets[sender]['need_to_restart']:
@@ -496,12 +496,33 @@ class Owns():
         checkbox = qg.QCheckBox(name)
         if default:
             checkbox.toggle()
+        checkbox.stateChanged.connect(self.bool_change)
+        
+        self.param_widgets[checkbox] = {'name': name,
+                                        'default': default,
+                                        'need_to_restart': need_to_restart}
         
         hbox = qg.QHBoxLayout()
         hbox.addWidget(checkbox)
         
         self.game.own_params[name] = default
         self.game.widget.vbox_right.addLayout(hbox)
+    
+    def bool_change(self, state):
+        sender = self.game.win.sender()
+        name = self.param_widgets[sender]['name']
+        
+        if self.param_widgets[sender]['need_to_restart']:
+            if state == qc.Qt.Checked:
+                self.game.new_own_params[name] = True
+            else:
+                self.game.new_own_params[name] = False
+        else:
+            if state == qc.Qt.Checked:
+                self.game.own_params[name] = True
+            else:
+                self.game.own_params[name] = False
+    
     
     def add_own_choice(self, name, default, need_to_restart, choice_list):
         pass
