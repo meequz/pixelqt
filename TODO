@@ -1,9 +1,11 @@
 General
 - action and control for grid on/off
 - action and control for label on top of saving image (name and frame number)
+- think if it possible to make api more simple and convenient
 
 Controls
 - make 'set default' button on each own param, with arrow icon
+- add common 'set defaults' button to main parameters
 - button for hide/show vbox_right
 - scroll in vbox_right
 - list with field presets
@@ -15,10 +17,12 @@ Field and drawing
 - optimize draw if possible
 
 Bugs and support
-- add install dependencies command to readme, at least for Debian/Ubuntu
+- add command to install dependencies with pip to readme
 - fix bug with strange drawing on some resolutions, e.g. 150x120 
 - analize similar pieces of code and move this functionality to special methods
 - ? check if works on mswindows and fix if not
+- write detailed guide with examples for all features
+- port my color_pixels from pygame to pixelqt
 
 Not sure if needed
 - add default window icon and config key to add own
