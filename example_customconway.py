@@ -7,8 +7,7 @@ import copy
 
 class GoL():
     def __init__(self):
-        self.alive_const = 3
-        self.notchange_const = 2
+        pass
     
     def generate_random(self):
         self.matrix = [[0]*self.w for i in range(self.h)]
@@ -24,10 +23,10 @@ class GoL():
             for col in range(self.w):
                 n = self.get_neighbors(line, col)
                 
-                if n == self.alive_const:
+                if self.alive_more <= n <= self.alive_less:
                     new[line][col] = 1
-                elif n == self.notchange_const:
-                    pass    # the cell is not changed
+                elif self.same_more <= n <= self.same_less:
+                    pass    # the cell stay the same
                 else:
                     new[line][col] = 0
         
@@ -49,12 +48,15 @@ class GoL():
         return res
 
 
+# function that returns dict to draw
 def get_drawdata(w, h, frame_count):
-    res = {}
+    # apply own parameters
+    life.alive_more = mygame.own_params['Alive if n between A']
+    life.alive_less = mygame.own_params['and B']
+    life.same_more = mygame.own_params['Same if n between C']
+    life.same_less = mygame.own_params['and D']
     
-    life.alive_const = mygame.own_params['Always alive if']
-    life.notchange_const = mygame.own_params['Dont change if']
-    
+    # handle if restart
     if frame_count == 0:
         life.w, life.h = w, h
         life.generate_random()
@@ -62,6 +64,7 @@ def get_drawdata(w, h, frame_count):
         life.compute()
     
     # create result dict to draw
+    res = {}
     for line in range(h):
         for col in range(w):
             if life.matrix[line][col]:
@@ -71,7 +74,12 @@ def get_drawdata(w, h, frame_count):
 
 
 life = GoL()
+
+# Create main instance and specify function that will be called periodically.
 mygame = pixelqt.Game(get_drawdata=get_drawdata)
+
+# Set your own default options. No one is required.
+# If you don't set them, the defaults will be used.
 mygame.config['name'] = 'Conway\'s Game of Life'
 mygame.config['w'] = 160
 mygame.config['h'] = 120
@@ -79,7 +87,10 @@ mygame.config['background'] = (50,50,50)
 mygame.config['zoom'] = 2
 mygame.init_controls('resolution', 'zoom', 'background', 'invert_colors', 'draw_each', 'save_each')
 
-mygame.add_own_num(name='Always alive if', default = 3, need_to_restart=False, minimum=0, maximum=8, step=1)
-mygame.add_own_num(name='Dont change if', default = 2, need_to_restart=False, minimum=0, maximum=8, step=1)
+# Add own parameter which will affect on game's behavior
+mygame.add_own_num(name='Alive if n between A', default = 3, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='and B', default = 3, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='Same if n between C', default = 2, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='and D', default = 2, need_to_restart=False, minimum=0, maximum=8, step=1)
 
 mygame.run()
