@@ -27,10 +27,9 @@ class Game():
         self.field = Field(game_instance=self)
         self.controls = Controls(game_instance=self)
         self.actions = Actions(game_instance=self)
-        self.win = Window(game_instance=self)
         
-        self.widget = self.win.widget
-        self.init_controls = self.win.widget.init_controls
+        self.win = Window(game_instance=self)
+        self.init_controls = self.win.init_controls
         
         self.owns = Owns(game_instance=self)
         self.add_own_num = self.owns.add_own_num
@@ -77,13 +76,48 @@ class Window(qg.QMainWindow):
     def __init__(self, game_instance):
         super(Window, self).__init__()
         self.game = game_instance
-        
-        self.widget = Widget(game_instance)
-        self.setCentralWidget(self.widget)
+        self.init_ui()
         
         self.setWindowTitle(self.game.config['name'])
         self.statusbar = self.statusBar()
         self.show()
+    
+    def init_ui(self):
+        # field and buttons - center widget
+        widget_field_and_bb = qg.QWidget()
+        layout_field_and_bb = qg.QVBoxLayout()
+        widget_field_and_bb.setLayout(layout_field_and_bb)
+        
+        bottom_buttons = self.create_bottom_buttons()
+        layout_field_and_bb.addWidget(self.game.field)
+        layout_field_and_bb.addLayout(bottom_buttons)
+        
+        self.setCentralWidget(widget_field_and_bb)
+        
+        # docks with controls and own parameters
+        dock_controls, self.layout_controls = self.create_dock('Controls')
+        dock_ownparams, self.layout_ownparams = self.create_dock('Game Parameters')
+        
+        # add docks to window
+        self.addDockWidget(qc.Qt.RightDockWidgetArea, dock_controls)
+        self.addDockWidget(qc.Qt.RightDockWidgetArea, dock_ownparams)
+        
+    def create_dock(self, name):
+        dock = qg.QDockWidget(name)
+        widget = qg.QWidget()
+        layout = qg.QVBoxLayout()
+        widget.setLayout(layout)
+        dock.setWidget(widget)
+        dock.setFeatures(qg.QDockWidget.DockWidgetMovable)
+        return dock, layout
+    
+    def create_bottom_buttons(self):
+        btn_pause_or_play = self.game.controls.button_pause_or_play()
+        btn_restart = self.game.controls.button_restart()
+        bottom_btns = qg.QHBoxLayout()
+        bottom_btns.addWidget(btn_pause_or_play)
+        bottom_btns.addWidget(btn_restart)
+        return bottom_btns
     
     def set_status(self):
         message = 'Frame ' + str(self.game.frame_count) + ', ' + self.game.state
@@ -91,59 +125,6 @@ class Window(qg.QMainWindow):
         if self.game.newconfig or self.game.new_own_params:
             message += '. Changes will take effect after restart'
         self.statusbar.showMessage(message)
-
-
-class Widget(qg.QWidget):
-    """Implements UI in window."""
-    def __init__(self, game_instance):
-        super(Widget, self).__init__()
-        self.game = game_instance
-        self.init_ui()
-    
-    def init_ui(self):
-        # create bottom buttons
-        btn_pause_or_play = self.game.controls.button_pause_or_play()
-        btn_restart = self.game.controls.button_restart()
-        self.bottom_btns = qg.QHBoxLayout()
-        self.bottom_btns.addWidget(btn_pause_or_play)
-        self.bottom_btns.addWidget(btn_restart)
-        
-        # create dock with field and buttons
-        dock_field_and_btns = qg.QDockWidget('Field')
-        widget_field_and_btns = qg.QWidget()
-        self.vbox_left = qg.QVBoxLayout()
-        widget_field_and_btns.setLayout(self.vbox_left)
-        dock_field_and_btns.setWidget(widget_field_and_btns)
-        dock_field_and_btns.setFeatures(qg.QDockWidget.DockWidgetMovable)
-        
-        # add to it's layout graphics and buttons
-        self.vbox_left.addWidget(self.game.field)
-        self.vbox_left.addLayout(self.bottom_btns)
-        
-        # create control and ownparams docks, their widgets and layouts
-        dock_controls = qg.QDockWidget('Controls')
-        dock_ownparams = qg.QDockWidget('Game parameters')
-        widget_controls = qg.QWidget()
-        widget_ownparams = qg.QWidget()
-        self.layout_controls = qg.QVBoxLayout()
-        self.layout_ownparams = qg.QVBoxLayout()
-        widget_controls.setLayout(self.layout_controls)
-        widget_ownparams.setLayout(self.layout_ownparams)
-        dock_controls.setWidget(widget_controls)
-        dock_ownparams.setWidget(widget_ownparams)
-        dock_controls.setFeatures(qg.QDockWidget.DockWidgetMovable)
-        dock_ownparams.setFeatures(qg.QDockWidget.DockWidgetMovable)
-        
-        # right vbox with controls and own parameters
-        self.vbox_right = qg.QVBoxLayout()
-        self.vbox_right.addWidget(dock_controls)
-        self.vbox_right.addWidget(dock_ownparams)
-        
-        # global horizontal box with two vertical boxes
-        self.global_hbox = qg.QHBoxLayout()
-        self.global_hbox.addWidget(dock_field_and_btns, 1)
-        self.global_hbox.addLayout(self.vbox_right)
-        self.setLayout(self.global_hbox)
     
     def init_controls(self, *args):
         if len(args) != len(set(args)):
@@ -501,7 +482,7 @@ class Owns():
         hbox.addWidget(spin)
         
         self.game.own_params[name] = default
-        self.game.widget.layout_ownparams.addLayout(hbox)
+        self.game.win.layout_ownparams.addLayout(hbox)
     
     def num_change(self):
         sender = self.game.win.sender()
@@ -527,7 +508,7 @@ class Owns():
         hbox.addWidget(checkbox)
         
         self.game.own_params[name] = default
-        self.game.widget.layout_ownparams.addLayout(hbox)
+        self.game.win.layout_ownparams.addLayout(hbox)
     
     def bool_change(self, state):
         sender = self.game.win.sender()
@@ -563,7 +544,7 @@ class Owns():
         hbox.addWidget(combo)
         
         self.game.own_params[name] = choice_list[default]
-        self.game.widget.layout_ownparams.addLayout(hbox)
+        self.game.win.layout_ownparams.addLayout(hbox)
         
     def choice_change(self, text):
         sender = self.game.win.sender()
