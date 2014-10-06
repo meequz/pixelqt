@@ -3,6 +3,7 @@ General
 - action and control for label on top of saving image (name and frame number)
 
 Controls
+- make 'set default' button on each own param, with arrow icon
 - button for hide/show vbox_right
 - scroll in vbox_right
 - list with field presets
