@@ -4,7 +4,6 @@ General
 - think if it possible to make api more simple and convenient
 
 Controls
-- make 'set default' button on each own param, with arrow icon
 - add common 'set defaults' button to main parameters
 - button for hide/show vbox_right
 - scroll in vbox_right
@@ -20,9 +19,9 @@ Bugs and support
 - add command to install dependencies with pip to readme
 - fix bug with strange drawing on some resolutions, e.g. 150x120 
 - analize similar pieces of code and move this functionality to special methods
-- ? check if works on mswindows and fix if not
 - write detailed guide with examples for all features
 - port my color_pixels from pygame to pixelqt
+- ? check if it works on mswindows and fix if not
 
 Not sure if needed
 - add default window icon and config key to add own
@@ -32,10 +31,6 @@ Not sure if needed
 - ? active/inactive (blind) controls
 - ? popup when incorrect values are set
 
-
-Types of own game parameters:
-	numbers: spinbox (start, finish, step)
-	bool: checkbox
-	choice: list with choices
-Arguments required for any parameter: name, default state, need to restart or not
-Own (game) parameters must be visually separated from control parameters
+Own (in-game) parameters:
+- they must be visually separated from control parameters
+- make 'set default' button on each own param, with arrow icon
