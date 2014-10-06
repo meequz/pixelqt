@@ -461,17 +461,19 @@ class Owns():
     def add_own_num(self, name, default, need_to_restart, minimum, maximum, step):
         label = qg.QLabel(name)
         spin = qg.QSpinBox()
-        self.param_widgets[spin] = {'name': name}
+        self.param_widgets[spin] = {'name': name,
+                                    'default': default,
+                                    'need_to_restart': need_to_restart,
+                                    'minimum': minimum,
+                                    'maximum': maximum,
+                                    'step': step}
         
         spin.setValue(default)
         spin.setMinimum(minimum)
         spin.setMaximum(maximum)
         spin.setSingleStep(step)
         
-        if need_to_restart:
-            spin.valueChanged[str].connect(self.num_change_after_restart)
-        else:
-            spin.valueChanged[str].connect(self.num_change)
+        spin.valueChanged[str].connect(self.num_change)
         
         hbox = qg.QHBoxLayout()
         hbox.addWidget(label)
@@ -484,14 +486,11 @@ class Owns():
         sender =self.game.win.sender() 
         value = sender.value()
         name = self.param_widgets[sender]['name']
-        self.game.own_params[name] = value
-    
-    def num_change_after_restart(self):
-        sender =self.game.win.sender() 
-        value = sender.value()
-        name = self.param_widgets[sender]['name']
-        self.game.new_own_params[name] = value
-    
+        if self.param_widgets[sender]['need_to_restart']:
+            self.game.new_own_params[name] = value
+        else:
+            self.game.own_params[name] = value
+
     
     def add_own_bool(self, name, default, need_to_restart):
         checkbox = qg.QCheckBox(name)
