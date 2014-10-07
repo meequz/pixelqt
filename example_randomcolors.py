@@ -29,7 +29,7 @@ mygame.config['w'] = 120
 # Height
 mygame.config['h'] = 90
 # Background color
-mygame.config['background'] = (255, 255, 150)
+mygame.config['background'] = [255, 255, 150]
 # Enable/Disable OpenGL in drawing
 mygame.config['gl'] = True
 # Save each N frame into file (get screenshot)

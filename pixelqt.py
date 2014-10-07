@@ -41,10 +41,11 @@ class Game():
             'w': 80,
             'h': 60,
             'zoom': 2,
-            'background': (0, 0, 0),
+            'background': [80, 80, 80],
             'draw_each': 1,
             'save_each': 0,
             'grid': False,
+            'gridcolor': [0, 0, 0],
             'invert_colors': False,
             'label': False,
             'gl': False
@@ -175,8 +176,12 @@ class Field(qg.QGraphicsView):
     
     def start(self):
         self.game.state = 'running'
+        
         self.generate_basis()
+        if self.game.config['grid']:
+            self.generate_grid()
         self.center_scene()
+        
         self.timer.start()
     
     def stop(self):
@@ -189,6 +194,28 @@ class Field(qg.QGraphicsView):
         line = numpy.array([self.game.config['background']] * self.game.config['w'])
         basis = numpy.array([line] * self.game.config['h'])
         self.basis = numpy.uint8(basis)
+    
+    def generate_grid(self):
+        w = self.game.config['w']
+        h = self.game.config['h']
+        zoom = self.game.config['zoom']
+        
+        # blue, green, red, alpha (0 is transparented)
+        col = self.game.config['gridcolor']
+        color_grid = [list(reversed(col)) + [255]]
+        
+        pattern = color_grid + [[0, 0, 0, 0]]*(zoom-1)
+        line = numpy.array(pattern * w)
+        grid = numpy.array([line] * (h*zoom))
+        
+        line_grid = numpy.array(color_grid * (w*zoom))
+        for i in range(h*zoom):
+            if i % zoom == 0:
+                grid[i] = line_grid
+        
+        grid = numpy.uint8(grid)
+        qimage = qg.QImage(grid.data, w*zoom, h*zoom, qg.QImage.Format_ARGB32)
+        self.grid = qg.QPixmap(qimage)
     
     def operate_frame(self):
         w = self.game.config['w']
@@ -244,6 +271,10 @@ class Field(qg.QGraphicsView):
         qpix = qpix.scaled(qpix.size()*self.game.config['zoom'], qc.Qt.KeepAspectRatio)
         self.scene.clear()
         self.scene.addPixmap(qpix)
+        
+        # add grid
+        if self.game.config['grid']:
+            self.scene.addPixmap(self.grid)
     
     def center_scene(self):
         w = self.game.config['w']
@@ -300,9 +331,10 @@ class Actions():
     def set_zoom(self):
         zoom_factor = self.game.win.sender().value()
         self.game.config['zoom'] = zoom_factor
-        # hack?
+        
         if self.game.field.timer.isActive():
             self.game.field.center_scene()
+            self.game.field.generate_grid()
     
     def set_background(self):
         col = qg.QColorDialog.getColor()

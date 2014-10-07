@@ -83,7 +83,6 @@ mygame = pixelqt.Game(get_drawdata=get_drawdata)
 mygame.config['name'] = 'Conway\'s Game of Life'
 mygame.config['w'] = 160
 mygame.config['h'] = 120
-mygame.config['background'] = (50,50,50)
 mygame.config['zoom'] = 2
 mygame.init_controls('resolution', 'zoom', 'background', 'invert_colors', 'draw_each', 'save_each')
 
