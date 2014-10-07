@@ -144,6 +144,9 @@ class Window(qg.QMainWindow):
             if arg == 'gl':
                 hbox_gl = self.game.controls.gl()
                 self.layout_controls.addLayout(hbox_gl)
+            if arg == 'grid':
+                hbox_grid = self.game.controls.grid()
+                self.layout_controls.addLayout(hbox_grid)
             if arg == 'draw_each':
                 hbox_draw_each = self.game.controls.draw_each()
                 self.layout_controls.addLayout(hbox_draw_each)
@@ -357,6 +360,12 @@ class Actions():
             self.game.field.setViewport(qg.QWidget())
             self.game.config['gl'] = False
     
+    def set_grid(self, state):
+        if state == qc.Qt.Checked:
+            self.game.config['grid'] = True
+        else:
+            self.game.config['grid'] = False
+    
     def set_save_each(self):
         save_each_number = self.game.win.sender().value()
         self.game.config['save_each'] = save_each_number
@@ -449,6 +458,17 @@ class Controls():
         hbox_gl.addWidget(checkbox_gl)
         
         return hbox_gl
+    
+    def grid(self):
+        checkbox_grid = qg.QCheckBox('Grid')
+        if self.game.config['grid']:
+            checkbox_grid.toggle()
+        checkbox_grid.stateChanged.connect(self.game.actions.set_grid)
+        
+        hbox_grid = qg.QHBoxLayout()
+        hbox_grid.addWidget(checkbox_grid)
+        
+        return hbox_grid
     
     def save_each(self):
         label_save_each = qg.QLabel('Save each X frame')
