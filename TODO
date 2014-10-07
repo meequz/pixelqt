@@ -1,5 +1,5 @@
 General
-- action and control for grid on/off
+- control for grid on/off
 - action and control for label on top of saving image (name and frame number)
 - think if it possible to make api more simple and convenient
 
@@ -10,6 +10,7 @@ Controls
 - list with field presets
 - blind grid control when zoom < 3
 - add tooltips to all controls
+- add keyboard shortcuts
 
 Field and drawing
 - fullscreen mode, switching by double click in field, or with F11
