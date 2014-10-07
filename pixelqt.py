@@ -274,7 +274,7 @@ class Field(qg.QGraphicsView):
         self.scene.addPixmap(qpix)
         
         # add grid
-        if self.game.config['grid']:
+        if self.game.config['grid'] and self.game.config['zoom'] >= 2:
             self.scene.addPixmap(self.grid)
     
     def center_scene(self):

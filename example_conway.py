@@ -74,6 +74,7 @@ mygame.config['w'] = 160
 mygame.config['h'] = 100
 mygame.config['background'] = [150, 150, 150]
 mygame.config['grid'] = True
+mygame.config['gridcolor'] = [150, 150, 150]
 mygame.config['zoom'] = 4
 mygame.init_controls('resolution', 'zoom', 'background', 'invert_colors', 'grid', 'gridcolor', 'draw_each', 'save_each')
 mygame.run()

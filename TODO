@@ -1,18 +1,17 @@
 General
-- action and control for label on top of saving image (name and frame number)
-- think if it possible to make api more simple and convenient
+- remember default config and save images according to it
+- add common 'set defaults' button to main parameters
 
 Controls
-- add common 'set defaults' button to main parameters
-- button for hide/show vbox_right
-- scroll in vbox_right
+- button for hide/show docks with controls and game params
 - list with field presets
-- blind grid control when zoom < 3
 - add tooltips to all controls
 - add keyboard shortcuts
+- 'save screen' button
 
 Field and drawing
-- fullscreen mode, switching by double click in field, or with F11
+- ? fullscreen mode, switching by double click in field, or with F11
+- change zoom by mouse wheel in field
 - optimize draw if possible
 
 Bugs and support
@@ -21,17 +20,21 @@ Bugs and support
 - analize similar pieces of code and move this functionality to special methods
 - write detailed guide with examples for all features
 - port my color_pixels from pygame to pixelqt
+- add example of using choice_list with presets of ingame parameters
 - ? check if it works on mswindows and fix if not
 
 Not sure if needed
 - add default window icon and config key to add own
 - buttons to save/load config - may be useful if many own parameters added
-- 'save screen' button
+- think if it possible to make api more simple and convenient
 - ? method to adding own hbox'es
 - ? active/inactive (blind) controls
 - ? popup when incorrect values are set
 
 Own (in-game) parameters:
-- they must be visually separated from control parameters
-- make 'set default' button on each own param, with arrow icon
+- make common 'set defaults' button
+- make little 'set default' button on each own param, with arrow icon
 - argument in add_own_* method to set tooltips to own parameters
+
+Not understood how to make:
+- action and control for draw text label over the top of saving image (name and frame number)
