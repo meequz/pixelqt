@@ -147,6 +147,9 @@ class Window(qg.QMainWindow):
             if arg == 'grid':
                 hbox_grid = self.game.controls.grid()
                 self.layout_controls.addLayout(hbox_grid)
+            if arg == 'gridcolor':
+                hbox_gridcolor = self.game.controls.gridcolor()
+                self.layout_controls.addLayout(hbox_gridcolor)
             if arg == 'draw_each':
                 hbox_draw_each = self.game.controls.draw_each()
                 self.layout_controls.addLayout(hbox_draw_each)
@@ -347,6 +350,14 @@ class Actions():
             self.game.field.generate_basis()
         self.colorize_button(self.game.controls.btn_background, col)
     
+    def set_gridcolor(self):
+        col = qg.QColorDialog.getColor()
+        if col.isValid():
+            color = col.getRgb()[:3]
+            self.game.config['gridcolor'] = color
+            self.game.field.generate_grid()
+        self.colorize_button(self.game.controls.btn_gridcolor, col)
+    
     def colorize_button(self, button, color):
         palette = qg.QPalette()
         palette.setColor(qg.QPalette.Button, color)
@@ -447,6 +458,19 @@ class Controls():
         hbox_background.addWidget(self.btn_background)
         
         return hbox_background
+    
+    def gridcolor(self):
+        label_gridcolor = qg.QLabel('Grid color:')
+        
+        self.btn_gridcolor = qg.QPushButton('Choose')
+        self.game.actions.colorize_button(self.btn_gridcolor, qg.QColor(*self.game.config['gridcolor']))
+        self.btn_gridcolor.clicked.connect(self.game.actions.set_gridcolor)
+        
+        hbox_gridcolor = qg.QHBoxLayout()
+        hbox_gridcolor.addWidget(label_gridcolor)
+        hbox_gridcolor.addWidget(self.btn_gridcolor)
+        
+        return hbox_gridcolor
     
     def gl(self):
         checkbox_gl = qg.QCheckBox('Use OpenGL')
