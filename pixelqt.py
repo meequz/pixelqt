@@ -56,6 +56,10 @@ class Game():
         """Perform actions that are not takes from config
         on each frame drawing.
         """
+        # save default configs to restore if need
+        self.def_config = self.config.copy()
+        self.def_own_params = self.own_params.copy()
+        
         # preparing
         self.actions.set_name()
         if self.config['gl']:
