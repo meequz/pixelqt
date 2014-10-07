@@ -338,7 +338,7 @@ class Actions():
             self.game.field.generate_grid()
     
     def set_background(self):
-        col = qg.QColorDialog.getColor()
+        col = qg.QColorDialog.getColor(qg.QColor(*self.game.config['background']))
         if col.isValid():
             color = col.getRgb()[:3]
             self.game.config['background'] = color
@@ -346,7 +346,7 @@ class Actions():
         self.colorize_button(self.game.controls.btn_background, col)
     
     def set_gridcolor(self):
-        col = qg.QColorDialog.getColor()
+        col = qg.QColorDialog.getColor(qg.QColor(*self.game.config['gridcolor']))
         if col.isValid():
             color = col.getRgb()[:3]
             self.game.config['gridcolor'] = color
