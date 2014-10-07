@@ -16,7 +16,20 @@ class Game():
         self.game = self
         self.app = qg.QApplication(sys.argv)
         
-        self.config = self.get_default_config()
+        self.config = {'name': 'Game is not loaded',
+                  'w': 80,
+                  'h': 60,
+                  'zoom': 2,
+                  'background': [80, 80, 80],
+                  'draw_each': 1,
+                  'save_each': 0,
+                  'grid': False,
+                  'gridcolor': [0, 0, 0],
+                  'invert_colors': False,
+                  'label': False,
+                  'gl': False
+        }
+        
         self.newconfig = {}
         self.own_params = {}
         self.new_own_params = {}
@@ -36,22 +49,6 @@ class Game():
         self.add_own_bool = self.owns.add_own_bool
         self.add_own_choice = self.owns.add_own_choice
     
-    def get_default_config(self):
-        config = {'name': 'Game is not loaded',
-                  'w': 80,
-                  'h': 60,
-                  'zoom': 2,
-                  'background': [80, 80, 80],
-                  'draw_each': 1,
-                  'save_each': 0,
-                  'grid': False,
-                  'gridcolor': [0, 0, 0],
-                  'invert_colors': False,
-                  'label': False,
-                  'gl': False
-        }
-        return config
-    
     def run(self):
         """Perform actions that are not takes from config
         on each frame drawing.
@@ -59,6 +56,10 @@ class Game():
         # save default configs to restore if need
         self.def_config = self.config.copy()
         self.def_own_params = self.own_params.copy()
+        
+        # delete own_params dock if it is empty
+        if not self.own_params:
+            self.win.dock_ownparams.deleteLater()
         
         # preparing
         self.actions.set_name()
@@ -74,7 +75,15 @@ class Game():
         # actual start
         self.field.start()
         sys.exit(self.app.exec_())
-        
+    
+    def restore_def_config(self):
+        self.newconfig = self.def_config.copy()
+        self.game.actions.restart()
+        # TODO: replace it with method which set default values to exact widgets
+    
+    def restore_def_ownparams(self):
+        self.new_ownparams = self.def_ownparams.copy()
+
 
 class Window(qg.QMainWindow):
     """Creates main widget and set window parameters (title, size etc)."""
@@ -88,7 +97,7 @@ class Window(qg.QMainWindow):
         self.show()
     
     def init_ui(self):
-        # field and buttons - center widget
+        # field and buttons - central widget
         widget_field_and_bb = qg.QWidget()
         layout_field_and_bb = qg.QVBoxLayout()
         widget_field_and_bb.setLayout(layout_field_and_bb)
@@ -100,13 +109,25 @@ class Window(qg.QMainWindow):
         self.setCentralWidget(widget_field_and_bb)
         
         # docks with controls and own parameters
-        dock_controls, self.layout_controls = self.create_dock('Controls')
-        dock_ownparams, self.layout_ownparams = self.create_dock('Game Parameters')
+        self.dock_controls, self.layout_controls = self.create_dock('Controls')
+        self.dock_ownparams, self.layout_ownparams = self.create_dock('Game Parameters')
+        
+        # add Restore defaults buttons to dock's layouts
+        btn_restore_def_config = self.create_button('restore defaults and restart', self.game.restore_def_config)
+        btn_restore_def_ownparams = self.create_button('restore defaults', self.game.restore_def_ownparams)
+        self.layout_controls.addWidget(btn_restore_def_config)
+        self.layout_ownparams.addWidget(btn_restore_def_ownparams)
         
         # add docks to window
-        self.addDockWidget(qc.Qt.RightDockWidgetArea, dock_controls)
-        self.addDockWidget(qc.Qt.RightDockWidgetArea, dock_ownparams)
-        
+        self.addDockWidget(qc.Qt.RightDockWidgetArea, self.dock_controls)
+        self.addDockWidget(qc.Qt.RightDockWidgetArea, self.dock_ownparams)
+    
+    def create_button(self, name, connect_to):
+        # TODO: use it everywhere
+        btn = qg.QPushButton(name)
+        btn.clicked.connect(connect_to)
+        return btn
+    
     def create_dock(self, name):
         dock = qg.QDockWidget(name)
         widget = qg.QWidget()
