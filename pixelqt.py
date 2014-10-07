@@ -38,17 +38,17 @@ class Game():
     
     def get_default_config(self):
         config = {'name': 'Game is not loaded',
-            'w': 80,
-            'h': 60,
-            'zoom': 2,
-            'background': [80, 80, 80],
-            'draw_each': 1,
-            'save_each': 0,
-            'grid': False,
-            'gridcolor': [0, 0, 0],
-            'invert_colors': False,
-            'label': False,
-            'gl': False
+                  'w': 80,
+                  'h': 60,
+                  'zoom': 2,
+                  'background': [80, 80, 80],
+                  'draw_each': 1,
+                  'save_each': 0,
+                  'grid': False,
+                  'gridcolor': [0, 0, 0],
+                  'invert_colors': False,
+                  'label': False,
+                  'gl': False
         }
         return config
     
@@ -133,32 +133,27 @@ class Window(qg.QMainWindow):
         
         for arg in args:
             if arg == 'resolution':
-                vbox_resolution = self.game.controls.resolution()
-                self.layout_controls.addLayout(vbox_resolution)
+                self.place_to_layout_controls(self.game.controls.resolution)
             if arg == 'zoom':
-                hbox_zoom = self.game.controls.zoom()
-                self.layout_controls.addLayout(hbox_zoom)
+                self.place_to_layout_controls(self.game.controls.zoom)
             if arg == 'background':
-                hbox_background = self.game.controls.background()
-                self.layout_controls.addLayout(hbox_background)
+                self.place_to_layout_controls(self.game.controls.background)
             if arg == 'gl':
-                hbox_gl = self.game.controls.gl()
-                self.layout_controls.addLayout(hbox_gl)
+                self.place_to_layout_controls(self.game.controls.gl)
             if arg == 'grid':
-                hbox_grid = self.game.controls.grid()
-                self.layout_controls.addLayout(hbox_grid)
+                self.place_to_layout_controls(self.game.controls.grid)
             if arg == 'gridcolor':
-                hbox_gridcolor = self.game.controls.gridcolor()
-                self.layout_controls.addLayout(hbox_gridcolor)
+                self.place_to_layout_controls(self.game.controls.gridcolor)
             if arg == 'draw_each':
-                hbox_draw_each = self.game.controls.draw_each()
-                self.layout_controls.addLayout(hbox_draw_each)
+                self.place_to_layout_controls(self.game.controls.draw_each)
             if arg == 'save_each':
-                hbox_save_each = self.game.controls.save_each()
-                self.layout_controls.addLayout(hbox_save_each)
+                self.place_to_layout_controls(self.game.controls.save_each)
             if arg == 'invert_colors':
-                hbox_invert_colors = self.game.controls.invert_colors()
-                self.layout_controls.addLayout(hbox_invert_colors)
+                self.place_to_layout_controls(self.game.controls.invert_colors)
+    
+    def place_to_layout_controls(self, controls_method):
+        box = controls_method()
+        self.layout_controls.addLayout(box)
 
 
 class Field(qg.QGraphicsView):
