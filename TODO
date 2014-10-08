@@ -1,6 +1,5 @@
 General
-- remember default config and save images according to it
-- add common 'set defaults' button to main parameters
+- save images according to default config
 
 Controls
 - button for hide/show docks with controls and game params
