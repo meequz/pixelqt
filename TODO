@@ -1,17 +1,17 @@
 General
-- save images according to default config
+- save images according to initial config
 
 Controls
 - button for hide/show docks with controls and game params
-- list with field presets
+- 'save screen' button
 - add tooltips to all controls
 - add keyboard shortcuts
-- 'save screen' button
+- ? make zoom compulsory, replace it with horizontal slider and move to bottom of the field
 
 Field and drawing
-- ? fullscreen mode, switching by double click in field, or with F11
 - change zoom by mouse wheel in field
-- optimize draw if possible
+- optimize draw and save if possible
+- ? fullscreen mode, switching by double click in field, or with F11
 
 Bugs and support
 - add command to install dependencies with pip to readme
@@ -19,13 +19,13 @@ Bugs and support
 - analize similar pieces of code and move this functionality to special methods
 - write detailed guide with examples for all features
 - port my color_pixels from pygame to pixelqt
-- add example of using choice_list with presets of ingame parameters
+- add example of using choice_list with presets of ingame parameters and field configuration
 - ? check if it works on mswindows and fix if not
 
-Not sure if needed
+Not sure if need
 - add default window icon and config key to add own
 - buttons to save/load config - may be useful if many own parameters added
-- think if it possible to make api more simple and convenient
+- think if it possible to make api even more simple and convenient
 - ? method to adding own hbox'es
 - ? active/inactive (blind) controls
 - ? popup when incorrect values are set

@@ -64,8 +64,8 @@ class Game():
         
         # fit window size. TODO: make it properly
         fitsize = self.win.sizeHint() +\
-            qc.QSize(self.config['w']*self.config['zoom'] + 40,
-            self.config['h']*self.config['zoom'] - 50)
+                  qc.QSize(self.config['w']*self.config['zoom'] + 40,
+                  self.config['h']*self.config['zoom'] - 50)
         self.win.resize(fitsize)
         
         # actual start
