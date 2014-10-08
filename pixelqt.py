@@ -53,10 +53,6 @@ class Game():
         """Perform actions that are not takes from config
         on each frame drawing.
         """
-        # save default configs to restore if need
-        self.def_config = self.config.copy()
-        self.def_own_params = self.own_params.copy()
-        
         # delete own_params dock if it is empty
         if not self.own_params:
             self.win.dock_ownparams.deleteLater()
@@ -77,12 +73,44 @@ class Game():
         sys.exit(self.app.exec_())
     
     def restore_def_config(self):
-        self.newconfig = self.def_config.copy()
-        self.game.actions.restart()
-        # TODO: replace it with method which set default values to exact widgets
+        for widget in self.controls.ctr_widgets:
+            widgetname = self.controls.ctr_widgets[widget]['widgetname']
+            def_value = self.controls.ctr_widgets[widget]['def_value']
+            
+            # resolution
+            if widgetname in ('w_lineedit', 'h_lineedit'):
+                widget.setText(str(def_value))
+            
+            # background color
+            if widgetname == 'btn_background':
+                self.config['background'] = def_value
+                self.field.generate_basis()
+                self.actions.colorize_button(widget, qg.QColor(*def_value))
+            
+            # grid color
+            if widgetname == 'btn_gridcolor':
+                self.config['gridcolor'] = def_value
+                self.field.generate_grid()
+                self.actions.colorize_button(widget, qg.QColor(*def_value))
+            
+            # draw each, save each, zoom
+            if widgetname in ('spin_draw_each',
+                              'spin_save_each',
+                              'spin_zoom'):
+                widget.setValue(def_value)
+            
+            # grid, invert_colors, gl
+            if widgetname in ('checkbox_grid',
+                              'checkbox_invert_colors',
+                              'checkbox_gl'):
+                if def_value:
+                    widget.setChecked(True)
+                else:
+                    widget.setChecked(False)
+            
     
     def restore_def_ownparams(self):
-        self.new_ownparams = self.def_ownparams.copy()
+        pass
 
 
 class Window(qg.QMainWindow):
@@ -113,7 +141,7 @@ class Window(qg.QMainWindow):
         self.dock_ownparams, self.layout_ownparams = self.create_dock('Game Parameters')
         
         # add Restore defaults buttons to dock's layouts
-        btn_restore_def_config = self.create_button('restore defaults and restart', self.game.restore_def_config)
+        btn_restore_def_config = self.create_button('restore defaults', self.game.restore_def_config)
         btn_restore_def_ownparams = self.create_button('restore defaults', self.game.restore_def_ownparams)
         self.layout_controls.addWidget(btn_restore_def_config)
         self.layout_ownparams.addWidget(btn_restore_def_ownparams)
@@ -154,27 +182,22 @@ class Window(qg.QMainWindow):
     
     def init_controls(self, *args):
         if len(args) != len(set(args)):
-            print('You added the same control twice or more. They may work incorrectly.')
+            print('You can\'t init the same control twice or more.')
+            exit(1)
+        
+        connects = {'resolution': self.game.controls.resolution,
+                    'zoom': self.game.controls.zoom,
+                    'background': self.game.controls.background,
+                    'gl': self.game.controls.gl,
+                    'grid': self.game.controls.grid,
+                    'gridcolor': self.game.controls.gridcolor,
+                    'draw_each': self.game.controls.draw_each,
+                    'save_each': self.game.controls.save_each,
+                    'invert_colors': self.game.controls.invert_colors}
         
         for arg in args:
-            if arg == 'resolution':
-                self.place_to_layout_controls(self.game.controls.resolution)
-            if arg == 'zoom':
-                self.place_to_layout_controls(self.game.controls.zoom)
-            if arg == 'background':
-                self.place_to_layout_controls(self.game.controls.background)
-            if arg == 'gl':
-                self.place_to_layout_controls(self.game.controls.gl)
-            if arg == 'grid':
-                self.place_to_layout_controls(self.game.controls.grid)
-            if arg == 'gridcolor':
-                self.place_to_layout_controls(self.game.controls.gridcolor)
-            if arg == 'draw_each':
-                self.place_to_layout_controls(self.game.controls.draw_each)
-            if arg == 'save_each':
-                self.place_to_layout_controls(self.game.controls.save_each)
-            if arg == 'invert_colors':
-                self.place_to_layout_controls(self.game.controls.invert_colors)
+            controls_method = connects[arg]
+            self.place_to_layout_controls(controls_method)
     
     def place_to_layout_controls(self, controls_method):
         box = controls_method()
@@ -346,8 +369,6 @@ class Actions():
             dimension = 'w'
         elif sender is self.game.controls.h_lineedit:
             dimension = 'h'
-        else:
-            print('oops!')
         
         try:
             self.game.newconfig[dimension] = int(text)
@@ -416,6 +437,8 @@ class Controls():
     """Contains base horizontal boxes and connects their widgets with actions"""
     def __init__(self, game_instance):
         self.game = game_instance
+        # for store default values
+        self.ctr_widgets = {}
     
     def button_pause_or_play(self):
         btn_pause_or_play = qg.QPushButton('Pause/Play')
@@ -431,14 +454,21 @@ class Controls():
         w = self.game.config['w']
         h = self.game.config['h']
         
+        # labels
         label_w = qg.QLabel('Width:')
         label_h = qg.QLabel('Height:')
         
+        # lineedits
         self.w_lineedit = qg.QLineEdit(str(w))
         self.h_lineedit = qg.QLineEdit(str(h))
         self.w_lineedit.textChanged[str].connect(self.game.actions.set_resolution)
         self.h_lineedit.textChanged[str].connect(self.game.actions.set_resolution)
         
+        # remember connection to restore defaults
+        self.ctr_widgets[self.w_lineedit] = {'widgetname': 'w_lineedit', 'def_value': w}
+        self.ctr_widgets[self.h_lineedit] = {'widgetname': 'h_lineedit', 'def_value': h}
+        
+        # horizontal boxes
         hbox_w = qg.QHBoxLayout()
         hbox_h = qg.QHBoxLayout()
         
@@ -447,6 +477,7 @@ class Controls():
         hbox_w.addWidget(self.w_lineedit)
         hbox_h.addWidget(self.h_lineedit)
         
+        # resulting vertical box
         vbox_resolution = qg.QVBoxLayout()
         vbox_resolution.addLayout(hbox_w)
         vbox_resolution.addLayout(hbox_h)
@@ -455,23 +486,31 @@ class Controls():
     
     def zoom(self):
         label_zoom = qg.QLabel('Zoom:')
-        spin_zoom = qg.QSpinBox()
-        spin_zoom.setMinimum(1)
-        spin_zoom.setValue(self.game.config['zoom'])
-        spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom)        # str?
+        self.spin_zoom = qg.QSpinBox()
+        self.spin_zoom.setMinimum(1)
+        self.spin_zoom.setValue(self.game.config['zoom'])
+        self.spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom)        # str?
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.spin_zoom] = {'widgetname': 'spin_zoom',
+                                            'def_value': self.game.config['zoom']}
         
         hbox_zoom = qg.QHBoxLayout()
         hbox_zoom.addWidget(label_zoom)
-        hbox_zoom.addWidget(spin_zoom)
+        hbox_zoom.addWidget(self.spin_zoom)
         
         return hbox_zoom
     
     def background(self):
+        # label and button
         label_background = qg.QLabel('Background:')
-        
         self.btn_background = qg.QPushButton('Choose')
         self.game.actions.colorize_button(self.btn_background, qg.QColor(*self.game.config['background']))
         self.btn_background.clicked.connect(self.game.actions.set_background)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.btn_background] = {'widgetname': 'btn_background',
+                                                 'def_value': self.game.config['background']}
         
         hbox_background = qg.QHBoxLayout()
         hbox_background.addWidget(label_background)
@@ -486,6 +525,10 @@ class Controls():
         self.game.actions.colorize_button(self.btn_gridcolor, qg.QColor(*self.game.config['gridcolor']))
         self.btn_gridcolor.clicked.connect(self.game.actions.set_gridcolor)
         
+        # remember connection to restore defaults
+        self.ctr_widgets[self.btn_gridcolor] = {'widgetname': 'btn_gridcolor',
+                                                'def_value': self.game.config['gridcolor']}
+        
         hbox_gridcolor = qg.QHBoxLayout()
         hbox_gridcolor.addWidget(label_gridcolor)
         hbox_gridcolor.addWidget(self.btn_gridcolor)
@@ -493,59 +536,79 @@ class Controls():
         return hbox_gridcolor
     
     def gl(self):
-        checkbox_gl = qg.QCheckBox('Use OpenGL')
+        self.checkbox_gl = qg.QCheckBox('Use OpenGL')
         if self.game.config['gl']:
-            checkbox_gl.toggle()
-        checkbox_gl.stateChanged.connect(self.game.actions.set_gl)
+            self.checkbox_gl.toggle()
+        self.checkbox_gl.stateChanged.connect(self.game.actions.set_gl)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.checkbox_gl] = {'widgetname': 'checkbox_gl',
+                                              'def_value': self.game.config['gl']}
         
         hbox_gl = qg.QHBoxLayout()
-        hbox_gl.addWidget(checkbox_gl)
+        hbox_gl.addWidget(self.checkbox_gl)
         
         return hbox_gl
     
     def grid(self):
-        checkbox_grid = qg.QCheckBox('Grid')
+        self.checkbox_grid = qg.QCheckBox('Grid')
         if self.game.config['grid']:
-            checkbox_grid.toggle()
-        checkbox_grid.stateChanged.connect(self.game.actions.set_grid)
+            self.checkbox_grid.toggle()
+        self.checkbox_grid.stateChanged.connect(self.game.actions.set_grid)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.checkbox_grid] = {'widgetname': 'checkbox_grid',
+                                                'def_value': self.game.config['grid']}
         
         hbox_grid = qg.QHBoxLayout()
-        hbox_grid.addWidget(checkbox_grid)
+        hbox_grid.addWidget(self.checkbox_grid)
         
         return hbox_grid
     
     def save_each(self):
         label_save_each = qg.QLabel('Save each X frame')
-        spin_save_each = qg.QSpinBox()
-        spin_save_each.setValue(self.game.config['save_each'])
-        spin_save_each.valueChanged[str].connect(self.game.actions.set_save_each)
+        self.spin_save_each = qg.QSpinBox()
+        self.spin_save_each.setValue(self.game.config['save_each'])
+        self.spin_save_each.valueChanged[str].connect(self.game.actions.set_save_each)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.spin_save_each] = {'widgetname': 'spin_save_each',
+                                                 'def_value': self.game.config['save_each']}
         
         hbox_save_each = qg.QHBoxLayout()
         hbox_save_each.addWidget(label_save_each)
-        hbox_save_each.addWidget(spin_save_each)
+        hbox_save_each.addWidget(self.spin_save_each)
         
         return hbox_save_each
     
     def draw_each(self):
         label_draw_each = qg.QLabel('Draw each X frame')
-        spin_draw_each = qg.QSpinBox()
-        spin_draw_each.setValue(self.game.config['draw_each'])
-        spin_draw_each.valueChanged[str].connect(self.game.actions.set_draw_each)
+        self.spin_draw_each = qg.QSpinBox()
+        self.spin_draw_each.setValue(self.game.config['draw_each'])
+        self.spin_draw_each.valueChanged[str].connect(self.game.actions.set_draw_each)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.spin_draw_each] = {'widgetname': 'spin_draw_each',
+                                                 'def_value': self.game.config['draw_each']}
         
         hbox_draw_each = qg.QHBoxLayout()
         hbox_draw_each.addWidget(label_draw_each)
-        hbox_draw_each.addWidget(spin_draw_each)
+        hbox_draw_each.addWidget(self.spin_draw_each)
         
         return hbox_draw_each
     
     def invert_colors(self):
-        checkbox_invert_colors = qg.QCheckBox('Invert colors')
+        self.checkbox_invert_colors = qg.QCheckBox('Invert colors')
         if self.game.config['invert_colors']:
-            checkbox_invert_colors.toggle()
-        checkbox_invert_colors.stateChanged.connect(self.game.actions.set_invert_colors)
+            self.checkbox_invert_colors.toggle()
+        self.checkbox_invert_colors.stateChanged.connect(self.game.actions.set_invert_colors)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.checkbox_invert_colors] = {'widgetname': 'checkbox_invert_colors',
+                                                         'def_value': self.game.config['invert_colors']}
         
         hbox_invert_colors = qg.QHBoxLayout()
-        hbox_invert_colors.addWidget(checkbox_invert_colors)
+        hbox_invert_colors.addWidget(self.checkbox_invert_colors)
         
         return hbox_invert_colors
 
