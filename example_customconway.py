@@ -87,9 +87,9 @@ mygame.config['zoom'] = 2
 mygame.init_controls('resolution', 'zoom', 'background', 'invert_colors', 'draw_each', 'save_each')
 
 # Add own parameter which will affect on game's behavior
-mygame.add_own_num(name='Alive if n between A', default = 3, need_to_restart=False, minimum=0, maximum=8, step=1)
-mygame.add_own_num(name='and B', default = 3, need_to_restart=False, minimum=0, maximum=8, step=1)
-mygame.add_own_num(name='Same if n between C', default = 2, need_to_restart=False, minimum=0, maximum=8, step=1)
-mygame.add_own_num(name='and D', default = 2, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='Alive if n between A', default=3, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='and B', default=3, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='Same if n between C', default=2, need_to_restart=False, minimum=0, maximum=8, step=1)
+mygame.add_own_num(name='and D', default=2, need_to_restart=False, minimum=0, maximum=8, step=1)
 
 mygame.run()

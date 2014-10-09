@@ -31,8 +31,7 @@ Not sure if need
 - ? popup when incorrect values are set
 
 Own (in-game) parameters:
-- make common 'set defaults' button
-- make little 'set default' button on each own param, with arrow icon
+- ? make little 'set default' button on each own param, with arrow icon
 - argument in add_own_* method to set tooltips to own parameters
 
 Not understood how to make:

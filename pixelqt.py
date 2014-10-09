@@ -74,6 +74,7 @@ class Game():
     
     def restore_def_config(self):
         for widget in self.controls.ctr_widgets:
+            
             widgetname = self.controls.ctr_widgets[widget]['widgetname']
             def_value = self.controls.ctr_widgets[widget]['def_value']
             
@@ -110,7 +111,25 @@ class Game():
             
     
     def restore_def_ownparams(self):
-        pass
+        for widget in self.owns.param_widgets:
+            
+            widgetname = self.owns.param_widgets[widget]['name']
+            def_value = self.owns.param_widgets[widget]['default']
+            
+            # spinboxes
+            if isinstance(widget, qg.QSpinBox):
+                widget.setValue(def_value)
+            
+            # checkboxes
+            if isinstance(widget, qg.QCheckBox):
+                if def_value:
+                    widget.setChecked(True)
+                else:
+                    widget.setChecked(False)
+            
+            # comboboxes
+            if isinstance(widget, qg.QComboBox):
+                widget.setCurrentIndex(def_value)
 
 
 class Window(qg.QMainWindow):
