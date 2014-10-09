@@ -2,14 +2,14 @@ General
 - save images according to initial config
 
 Controls
-- button for hide/show docks with controls and game params
-- 'save screen' button
+- add bar under field with zoom control, 'invert colors' button, 'hide docks' button
+  and 'save screen' button
+- make zoom and 'invert colors' are compulsory
+- replace zoom control with horizontal slider
 - add tooltips to all controls
 - add keyboard shortcuts
-- ? make zoom compulsory, replace it with horizontal slider and move to bottom of the field
 
 Field and drawing
-- change zoom by mouse wheel in field
 - optimize draw and save if possible
 - remember generated grids and do not regenerate them
 - ? fullscreen mode, switching by double click in field, or with F11
