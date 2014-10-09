@@ -11,6 +11,7 @@ Controls
 Field and drawing
 - change zoom by mouse wheel in field
 - optimize draw and save if possible
+- remember generated grids and do not regenerate them
 - ? fullscreen mode, switching by double click in field, or with F11
 
 Bugs and support

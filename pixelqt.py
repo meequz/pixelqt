@@ -347,7 +347,7 @@ class Field(qg.QGraphicsView):
     
     def draw_frame(self):
         # invert colors
-        if self.game.config['invert_colors']:
+        if self.game.config['invert_colors'] and self.timer.isActive():
             self.qimage.invertPixels()
         
         # convert to qpixmap, scale and draw
@@ -420,10 +420,11 @@ class Actions():
         else:
             return
         
-        if self.game.field.timer.isActive():
-            self.game.field.center_scene()
-            if self.game.config['grid']:
-                self.game.field.generate_grid()
+        self.game.field.center_scene()
+        if self.game.config['grid']:
+            self.game.field.generate_grid()
+        if not self.game.field.timer.isActive():
+            self.game.field.draw_frame()
     
     def set_background(self):
         col = qg.QColorDialog.getColor(qg.QColor(*self.game.config['background']))
@@ -457,8 +458,12 @@ class Actions():
     def set_grid(self, state):
         if state == qc.Qt.Checked:
             self.game.config['grid'] = True
+            self.game.field.generate_grid()
         else:
             self.game.config['grid'] = False
+        
+        if not self.game.field.timer.isActive():
+            self.game.field.draw_frame()
     
     def set_save_each(self):
         save_each_number = self.game.win.sender().value()
@@ -473,6 +478,10 @@ class Actions():
             self.game.config['invert_colors'] = True
         else:
             self.game.config['invert_colors'] = False
+        
+        if not self.game.field.timer.isActive():
+            self.game.field.qimage.invertPixels()
+            self.game.field.draw_frame()
 
 
 class Controls():
