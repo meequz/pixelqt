@@ -242,6 +242,22 @@ class Field(qg.QGraphicsView):
         self.timer=qc.QTimer()
         self.timer.timeout.connect(self.operate_frame)
     
+    # zoom by mouse wheel
+    def wheelEvent(self, event):
+        # if control exists. TODO: make control compulsory and zoom action is permanent
+        try:
+            spin_zoom = self.game.controls.spin_zoom
+            if event.delta() > 0:
+                spin_zoom.setValue(self.game.config['zoom']+1)
+            else:
+                spin_zoom.setValue(self.game.config['zoom']-1)
+        #~ else
+        except AttributeError:
+            if event.delta() > 0:
+                self.game.actions.set_zoom(self.game.config['zoom']+1)
+            else:
+                self.game.actions.set_zoom(self.game.config['zoom']-1)
+    
     def start(self):
         self.game.state = 'running'
         
@@ -394,13 +410,20 @@ class Actions():
         except ValueError:
             self.game.newconfig[dimension] = self.game.config[dimension]
     
-    def set_zoom(self):
+    def set_zoom_catch(self):
         zoom_factor = self.game.win.sender().value()
-        self.game.config['zoom'] = zoom_factor
+        self.set_zoom(zoom_factor)
+    
+    def set_zoom(self, zoom_factor):
+        if zoom_factor >= 1:
+            self.game.config['zoom'] = zoom_factor
+        else:
+            return
         
         if self.game.field.timer.isActive():
             self.game.field.center_scene()
-            self.game.field.generate_grid()
+            if self.game.config['grid']:
+                self.game.field.generate_grid()
     
     def set_background(self):
         col = qg.QColorDialog.getColor(qg.QColor(*self.game.config['background']))
@@ -508,7 +531,7 @@ class Controls():
         self.spin_zoom = qg.QSpinBox()
         self.spin_zoom.setMinimum(1)
         self.spin_zoom.setValue(self.game.config['zoom'])
-        self.spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom)        # str?
+        self.spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom_catch)        # str?
         
         # remember connection to restore defaults
         self.ctr_widgets[self.spin_zoom] = {'widgetname': 'spin_zoom',
