@@ -1,6 +1,6 @@
 General
 - ? save images according to initial config
-- if get out-of-range coordinates, map them circularly
+- ? if get out-of-range coordinates, map them circularly
 
 Controls
 - add bar under field with zoom control, 'invert colors' button, 'hide docks' button

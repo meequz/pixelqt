@@ -445,7 +445,7 @@ class Actions():
             color = col.getRgb()[:3]
             self.game.config['background'] = color
             self.game.field.generate_basis()
-        self.colorize_button(self.game.controls.btn_background, col)
+            self.colorize_button(self.game.controls.btn_background, col)
     
     def set_gridcolor(self):
         col = qg.QColorDialog.getColor(qg.QColor(*self.game.config['gridcolor']))
@@ -453,7 +453,7 @@ class Actions():
             color = col.getRgb()[:3]
             self.game.config['gridcolor'] = color
             self.game.field.generate_grid()
-        self.colorize_button(self.game.controls.btn_gridcolor, col)
+            self.colorize_button(self.game.controls.btn_gridcolor, col)
     
     def colorize_button(self, button, color):
         palette = qg.QPalette()
