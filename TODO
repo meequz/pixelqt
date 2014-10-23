@@ -12,7 +12,6 @@ Controls
 
 Field and drawing
 - optimize drawing and saving if possible
-- remember generated grids and do not regenerate them
 - ? fullscreen mode, switching by double click in field, or with F11
 
 Bugs and support

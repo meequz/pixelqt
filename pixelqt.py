@@ -237,6 +237,7 @@ class Field(qg.QGraphicsView):
         self.setScene(self.scene)
         
         self.setDragMode(self.ScrollHandDrag)
+        self.grids_done = {}
         
         # when timer triggers, it calls the operate_frame method
         self.timer=qc.QTimer()
@@ -244,14 +245,14 @@ class Field(qg.QGraphicsView):
     
     # zoom by mouse wheel
     def wheelEvent(self, event):
-        # if control exists. TODO: make control compulsory and zoom action is permanent
+        # if control exists
         try:
             spin_zoom = self.game.controls.spin_zoom
             if event.delta() > 0:
                 spin_zoom.setValue(self.game.config['zoom']+1)
             else:
                 spin_zoom.setValue(self.game.config['zoom']-1)
-        #~ else
+        # if control does not exist
         except AttributeError:
             if event.delta() > 0:
                 self.game.actions.set_zoom(self.game.config['zoom']+1)
@@ -274,7 +275,7 @@ class Field(qg.QGraphicsView):
         self.game.win.set_status()
     
     def generate_basis(self):
-        # generate base image with background
+        # generate background image
         line = numpy.array([self.game.config['background']] * self.game.config['w'])
         basis = numpy.array([line] * self.game.config['h'])
         self.basis = numpy.uint8(basis)
@@ -285,9 +286,17 @@ class Field(qg.QGraphicsView):
         zoom = self.game.config['zoom']
         
         # blue, green, red, alpha (0 is transparented)
-        col = self.game.config['gridcolor']
+        col = tuple(self.game.config['gridcolor'])
         color_grid = [list(reversed(col)) + [255]]
         
+        # try to assign already generated one
+        try:
+            self.grid = self.grids_done[(w,h,zoom,col)]
+            return
+        except KeyError:
+            pass
+        
+        # generate grid
         pattern = color_grid + [[0, 0, 0, 0]]*(zoom-1)
         line = numpy.array(pattern * w)
         grid = numpy.array([line] * (h*zoom))
@@ -297,9 +306,13 @@ class Field(qg.QGraphicsView):
             if i % zoom == 0:
                 grid[i] = line_grid
         
+        # convert to qpix
         grid = numpy.uint8(grid)
         qimage = qg.QImage(grid.data, w*zoom, h*zoom, qg.QImage.Format_ARGB32)
         self.grid = qg.QPixmap(qimage)
+        
+        # save
+        self.grids_done[(w,h,zoom,col)] = self.grid
     
     def operate_frame(self):
         w = self.game.config['w']
@@ -662,6 +675,7 @@ class Controls():
         hbox_invert_colors.addWidget(self.checkbox_invert_colors)
         
         return hbox_invert_colors
+
 
 class Owns():
     """Operate controls and actions of own parameters"""
