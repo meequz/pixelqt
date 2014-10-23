@@ -1,5 +1,6 @@
 General
-- save images according to initial config
+- ? save images according to initial config
+- if get out-of-range coordinates, map them circularly
 
 Controls
 - add bar under field with zoom control, 'invert colors' button, 'hide docks' button
@@ -10,7 +11,7 @@ Controls
 - add keyboard shortcuts
 
 Field and drawing
-- optimize draw and save if possible
+- optimize drawing and saving if possible
 - remember generated grids and do not regenerate them
 - ? fullscreen mode, switching by double click in field, or with F11
 
@@ -21,7 +22,7 @@ Bugs and support
 - write detailed guide with examples for all features
 - port my color_pixels from pygame to pixelqt
 - add example of using choice_list with presets of ingame parameters and field configuration
-- ? check if it works on mswindows and fix if not
+- ? check if it works on mswindows and mac and fix if not
 
 Not sure if need
 - add default window icon and config key to add own
