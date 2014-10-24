@@ -187,7 +187,7 @@ class Window(qg.QMainWindow):
         layout = qg.QVBoxLayout()
         widget.setLayout(layout)
         dock.setWidget(widget)
-        dock.setFeatures(qg.QDockWidget.DockWidgetMovable | qg.QDockWidget.DockWidgetClosable)
+        dock.setFeatures(qg.QDockWidget.DockWidgetMovable)
         return dock, layout
     
     def create_bottom_buttons(self):
@@ -280,13 +280,19 @@ class Field(qg.QGraphicsView):
                 self.game.actions.set_zoom(self.game.config['zoom']-1)
     
     def start(self):
+        # for statusbar
         self.game.state = 'running'
         
+        # button must not be checked if game is running
+        self.game.win.btn_pause_or_play.setChecked(False)
+        
+        # prepare for drawing
         self.generate_basis()
         if self.game.config['grid']:
             self.generate_grid()
         self.center_scene()
         
+        # go!
         self.timer.start()
     
     def stop(self):
