@@ -53,18 +53,20 @@ class Game():
         """Perform actions that are not takes from config
         on each frame drawing.
         """
-        # delete own_params dock if it is empty
+        # delete docks if they are empty
         if not self.own_params:
             self.win.dock_ownparams.deleteLater()
+        if not self.controls.ctr_widgets:
+            self.win.dock_controls.deleteLater()
         
         # preparing
         self.actions.set_name()
         if self.config['gl']:
             self.actions.set_gl(qc.Qt.Checked)
         
-        # fit window size. TODO: make it properly
+        # fit window size. TODO: make it properly (how?!)
         fitsize = self.win.sizeHint() +\
-                  qc.QSize(self.config['w']*self.config['zoom'] + 40,
+                  qc.QSize(self.config['w']*self.config['zoom'] - 250,
                   self.config['h']*self.config['zoom'] - 50)
         self.win.resize(fitsize)
         
@@ -168,7 +170,7 @@ class Window(qg.QMainWindow):
         # add docks to window
         self.addDockWidget(qc.Qt.RightDockWidgetArea, self.dock_controls)
         self.addDockWidget(qc.Qt.RightDockWidgetArea, self.dock_ownparams)
-    
+        
     def create_button(self, name, connect_to):
         # TODO: use it everywhere
         btn = qg.QPushButton(name)
@@ -185,12 +187,23 @@ class Window(qg.QMainWindow):
         return dock, layout
     
     def create_bottom_buttons(self):
-        btn_pause_or_play = self.game.controls.button_pause_or_play()
-        btn_restart = self.game.controls.button_restart()
+        btn_pause_or_play = self.create_button('Pause/Play', self.game.actions.pause_or_play)
+        btn_restart = self.create_button('Restart', self.game.actions.restart)
+        btn_hide_docks = qg.QPushButton('Hide docks')
+        btn_save_screen = qg.QPushButton('Save screen')
+        
         bottom_btns = qg.QHBoxLayout()
+        
+        bottom_btns.addStretch(0)
+        bottom_btns.addWidget(btn_save_screen)
+        bottom_btns.addWidget(btn_hide_docks)
+        bottom_btns.addStretch(0)
         bottom_btns.addWidget(btn_pause_or_play)
         bottom_btns.addWidget(btn_restart)
+        bottom_btns.addStretch(0)
+        
         return bottom_btns
+
     
     def set_status(self):
         message = 'Frame ' + str(self.game.frame_count) + ', ' + self.game.state
@@ -503,16 +516,6 @@ class Controls():
         self.game = game_instance
         # for store default values
         self.ctr_widgets = {}
-    
-    def button_pause_or_play(self):
-        btn_pause_or_play = qg.QPushButton('Pause/Play')
-        btn_pause_or_play.clicked.connect(self.game.actions.pause_or_play)
-        return btn_pause_or_play
-    
-    def button_restart(self):
-        btn_restart = qg.QPushButton('(Re)Start')
-        btn_restart.clicked.connect(self.game.actions.restart)
-        return btn_restart
     
     def resolution(self):
         w = self.game.config['w']

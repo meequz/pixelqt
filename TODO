@@ -1,20 +1,20 @@
 General
 - ? save images according to initial config
 - ? if get out-of-range coordinates, map them circularly
+- add localization possibility
 
 Controls
-- add bar under field with zoom control, 'invert colors' button, 'hide docks' button
-  and 'save screen' button
-- make zoom and 'invert colors' are compulsory
-- replace zoom control with horizontal slider
 - add tooltips to all controls
+- make pause and hide buttons checkable
 - add keyboard shortcuts
 
 Field and drawing
+- add option that cells which just disappeared leave trace for one frame
 - optimize drawing and saving if possible
 - ? fullscreen mode, switching by double click in field, or with F11
 
 Bugs and support
+- fix bug with dock moving
 - add command to install dependencies with pip to readme
 - fix bug with strange drawing on some resolutions, e.g. 150x120 
 - analize similar pieces of code and move this functionality to special methods
