@@ -11,6 +11,8 @@ Field and drawing
 - add option that cells which just disappeared leave trace for one frame
 - optimize drawing and saving if possible
 - ? fullscreen mode, switching by double click in field, or with F11
+- action and control for draw text label over the top of saving image (name and frame number)
+  see example here: https://wiki.python.org/moin/PyQt/Extend%20Two%20QPixmap
 
 Bugs and support
 - fix bug with dock moving
@@ -33,6 +35,3 @@ Not sure if need
 Own (in-game) parameters:
 - ? make little 'set default' button on each own param, with arrow icon
 - argument in add_own_* method to set tooltips to own parameters
-
-Not understood how to make:
-- action and control for draw text label over the top of saving image (name and frame number)

@@ -17,17 +17,17 @@ class Game():
         self.app = qg.QApplication(sys.argv)
         
         self.config = {'name': 'Game is not loaded',
-                  'w': 80,
-                  'h': 60,
-                  'zoom': 2,
-                  'background': [80, 80, 80],
-                  'draw_each': 1,
-                  'save_each': 0,
-                  'grid': False,
-                  'gridcolor': [0, 0, 0],
-                  'invert_colors': False,
-                  'label': False,
-                  'gl': False
+                       'w': 80,
+                       'h': 60,
+                       'zoom': 2,
+                       'background': [80, 80, 80],
+                       'draw_each': 1,
+                       'save_each': 0,
+                       'grid': False,
+                       'gridcolor': [0, 0, 0],
+                       'invert_colors': False,
+                       'label': False,
+                       'gl': False
         }
         
         self.newconfig = {}
@@ -260,7 +260,7 @@ class Field(qg.QGraphicsView):
         self.grids_done = {}
         
         # when timer triggers, it calls the operate_frame method
-        self.timer=qc.QTimer()
+        self.timer = qc.QTimer()
         self.timer.timeout.connect(self.operate_frame)
     
     # zoom by mouse wheel
@@ -377,8 +377,8 @@ class Field(qg.QGraphicsView):
         # get screenshot filename
         date = datetime.datetime.now().strftime('%G-%m-%d-%H-%M-%S-%f')
         filename = self.game.config['name'] + '_' +\
-                    date + '_' +\
-                    str(self.game.frame_count) + '.png'
+                   date + '_' +\
+                   str(self.game.frame_count) + '.png'
         
         # convert and save
         qpix = qg.QPixmap(self.qimage)
