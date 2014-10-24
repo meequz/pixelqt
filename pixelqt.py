@@ -535,6 +535,8 @@ class Actions():
                 dock.show()
     
     def save_screen(self):
+        self.pause_or_play()
+        
         date = datetime.datetime.now().strftime('%G-%m-%d-%H-%M-%S-%f')
         def_name = self.game.config['name'] + '_' +\
                    date + '_' +\
@@ -546,6 +548,8 @@ class Actions():
         
         qpix = qg.QPixmap(self.game.field.qimage)
         qpix.save(filename)
+        
+        self.pause_or_play()
 
 
 class Controls():
