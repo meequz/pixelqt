@@ -191,10 +191,13 @@ class Window(qg.QMainWindow):
         return dock, layout
     
     def create_bottom_buttons(self):
-        btn_pause_or_play = self.create_button('Pause/Play', self.game.actions.pause_or_play)
+        self.btn_pause_or_play = self.create_button('Pause', self.game.actions.pause_or_play)
         btn_restart = self.create_button('Restart', self.game.actions.restart)
-        self.btn_hide_docks = self.create_button('Hide/Show docks', self.game.actions.hide_show_docks)
+        self.btn_hide_docks = self.create_button('Hide docks', self.game.actions.hide_show_docks)
         btn_save_screen = self.create_button('Save screen', self.game.actions.save_screen)
+        
+        self.btn_hide_docks.setCheckable(True)
+        self.btn_pause_or_play.setCheckable(True)
         
         bottom_btns = qg.QHBoxLayout()
         
@@ -202,7 +205,7 @@ class Window(qg.QMainWindow):
         bottom_btns.addWidget(btn_save_screen)
         bottom_btns.addWidget(self.btn_hide_docks)
         bottom_btns.addStretch(0)
-        bottom_btns.addWidget(btn_pause_or_play)
+        bottom_btns.addWidget(self.btn_pause_or_play)
         bottom_btns.addWidget(btn_restart)
         bottom_btns.addStretch(0)
         
@@ -535,21 +538,27 @@ class Actions():
                 dock.show()
     
     def save_screen(self):
-        self.pause_or_play()
+        # stop while saving screen
+        self.game.field.stop()
         
+        # get default file name
         date = datetime.datetime.now().strftime('%G-%m-%d-%H-%M-%S-%f')
         def_name = self.game.config['name'] + '_' +\
                    date + '_' +\
                    str(self.game.frame_count) + '.png'
         
+        # dialog
         filename = qg.QFileDialog.getSaveFileName(self.game.win, 'Save screen', def_name, '')
         if not filename:
             return
         
+        # save
         qpix = qg.QPixmap(self.game.field.qimage)
         qpix.save(filename)
         
-        self.pause_or_play()
+        # start if not paused manually
+        if not self.game.win.btn_pause_or_play.isChecked():
+            self.game.field.start()
 
 
 class Controls():
