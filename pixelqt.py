@@ -194,7 +194,7 @@ class Window(qg.QMainWindow):
         btn_pause_or_play = self.create_button('Pause/Play', self.game.actions.pause_or_play)
         btn_restart = self.create_button('Restart', self.game.actions.restart)
         self.btn_hide_docks = self.create_button('Hide/Show docks', self.game.actions.hide_show_docks)
-        btn_save_screen = qg.QPushButton('Save screen')
+        btn_save_screen = self.create_button('Save screen', self.game.actions.save_screen)
         
         bottom_btns = qg.QHBoxLayout()
         
@@ -533,6 +533,19 @@ class Actions():
         else:
             for dock in docks:
                 dock.show()
+    
+    def save_screen(self):
+        date = datetime.datetime.now().strftime('%G-%m-%d-%H-%M-%S-%f')
+        def_name = self.game.config['name'] + '_' +\
+                   date + '_' +\
+                   str(self.game.frame_count) + '.png'
+        
+        filename = qg.QFileDialog.getSaveFileName(self.game.win, 'Save screen', def_name, '')
+        if not filename:
+            return
+        
+        qpix = qg.QPixmap(self.game.field.qimage)
+        qpix.save(filename)
 
 
 class Controls():
