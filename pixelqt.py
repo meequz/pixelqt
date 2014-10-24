@@ -54,10 +54,14 @@ class Game():
         on each frame drawing.
         """
         # delete docks if they are empty
-        if not self.own_params:
-            self.win.dock_ownparams.deleteLater()
         if not self.controls.ctr_widgets:
             self.win.dock_controls.deleteLater()
+        if not self.own_params:
+            self.win.dock_ownparams.deleteLater()
+        
+        # blind button if no docks
+        if not self.controls.ctr_widgets and not self.own_params:
+            self.win.btn_hide_docks.setEnabled(False)
         
         # preparing
         self.actions.set_name()
@@ -183,20 +187,20 @@ class Window(qg.QMainWindow):
         layout = qg.QVBoxLayout()
         widget.setLayout(layout)
         dock.setWidget(widget)
-        dock.setFeatures(qg.QDockWidget.DockWidgetMovable)
+        dock.setFeatures(qg.QDockWidget.DockWidgetMovable | qg.QDockWidget.DockWidgetClosable)
         return dock, layout
     
     def create_bottom_buttons(self):
         btn_pause_or_play = self.create_button('Pause/Play', self.game.actions.pause_or_play)
         btn_restart = self.create_button('Restart', self.game.actions.restart)
-        btn_hide_docks = qg.QPushButton('Hide docks')
+        self.btn_hide_docks = self.create_button('Hide/Show docks', self.game.actions.hide_show_docks)
         btn_save_screen = qg.QPushButton('Save screen')
         
         bottom_btns = qg.QHBoxLayout()
         
         bottom_btns.addStretch(0)
         bottom_btns.addWidget(btn_save_screen)
-        bottom_btns.addWidget(btn_hide_docks)
+        bottom_btns.addWidget(self.btn_hide_docks)
         bottom_btns.addStretch(0)
         bottom_btns.addWidget(btn_pause_or_play)
         bottom_btns.addWidget(btn_restart)
@@ -443,8 +447,6 @@ class Actions():
     def set_zoom(self, zoom_factor):
         if zoom_factor >= 1:
             self.game.config['zoom'] = zoom_factor
-        else:
-            return
         
         self.game.field.center_scene()
         if self.game.config['grid']:
@@ -508,6 +510,29 @@ class Actions():
         if not self.game.field.timer.isActive():
             self.game.field.qimage.invertPixels()
             self.game.field.draw_frame()
+    
+    def hide_show_docks(self):
+        docks = []
+        
+        # get all docks
+        if self.game.controls.ctr_widgets:
+            docks.append(self.game.win.dock_controls)
+        if self.game.own_params:
+            docks.append(self.game.win.dock_ownparams)
+        
+        # if one or more is visible, hide
+        will_hide = False
+        for dock in docks:
+            if dock.isVisible():
+                will_hide = True
+        
+        # show or hide
+        if will_hide:
+            for dock in docks:
+                dock.hide()
+        else:
+            for dock in docks:
+                dock.show()
 
 
 class Controls():
