@@ -11,6 +11,9 @@ class RandomLines():
         self.matrix = [[0]*self.w for x in range(self.h)]
         self.line = [0]*self.w
     
+    def set_antirandom_chance(self, k):
+        self.randfrom = [-1] + [0]*k + [1]
+    
     def gen_line(self):
         prev_line = self.line[:]
         self.line = []
@@ -20,7 +23,7 @@ class RandomLines():
         # generate base line
         if max(prev_line) < self.h:
             for col_i in range(self.w):
-                rand = random.choice((-1,0,1))
+                rand = random.choice(self.randfrom)
                 line_i = prev_line[col_i] + self.dist + rand
                 
                 try:
@@ -53,6 +56,7 @@ def get_drawdata(w, h, frame_count):
     
     if frame_count == 0:
         randomlines.w, randomlines.h = w, h
+        randomlines.set_antirandom_chance(mygame.own_params['Antirandom chance'])
         randomlines.restart()
     else:
         randomlines.gen_line()
@@ -68,10 +72,12 @@ def get_drawdata(w, h, frame_count):
 
 randomlines = RandomLines()
 mygame = pixelqt.Game(get_drawdata=get_drawdata)
+mygame.config['name'] = 'Lines with random'
 mygame.config['w'] = 800
 mygame.config['h'] = 2000
 mygame.config['zoom'] = 1
-mygame.init_controls('resolution', 'zoom', 'background', 'grid', 'invert_colors', 'draw_each', 'save_each')
-mygame.add_own_num(name='Distance', default=14, need_to_restart=False, minimum=1, maximum=20, step=1)
-mygame.add_own_bool(name='Connect dotes', default=False, need_to_restart=False)
+mygame.init_controls('resolution', 'zoom', 'draw_each')
+mygame.add_own_num(name='Distance', default=16, need_to_restart=False, minimum=1, maximum=20, step=1)
+mygame.add_own_num(name='Antirandom chance', default=32, need_to_restart=True, minimum=1, maximum=99, step=1)
+mygame.add_own_bool(name='Connect dotes', default=True, need_to_restart=False)
 mygame.run()
