@@ -2,6 +2,8 @@ General
 - ? save images according to initial config
 - ? if get out-of-range coordinates, map them circularly
 - add localization possibility
+- add about button for info about algorithm
+- add superposition mode
 
 Controls
 - add tooltips to all controls
