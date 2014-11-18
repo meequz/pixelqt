@@ -262,7 +262,7 @@ class Field(qg.QGraphicsView):
         self.grids_done = {}
         
         # for overlay mode
-        self.prev_drawdata = {}
+        self.drawdata = {}
         
         # when timer triggers, it calls the operate_frame method
         self.timer = qc.QTimer()
@@ -348,7 +348,7 @@ class Field(qg.QGraphicsView):
     def operate_frame(self):
         w, h = self.game.config['w'], self.game.config['h']
         imdata = self.basis.copy()
-        drawdata = self.game.get_drawdata(w, h, self.game.frame_count)
+        new_drawdata = self.game.get_drawdata(w, h, self.game.frame_count)
         
         # if we will save and/or will draw
         try:
@@ -360,15 +360,16 @@ class Field(qg.QGraphicsView):
         except ZeroDivisionError:
             will_draw = False
         
-        # if overlay mode, merge currenct drawdata with previous one
+        # if overlay mode, merge previous drawdata with new one
         if self.game.config['over']:
-            for coords in self.prev_drawdata:
-                drawdata[coords] = self.prev_drawdata[coords]
+            self.drawdata.update(new_drawdata)
+        else:
+            self.drawdata = new_drawdata
         
-        # generate result qimage
+        # generate result qimage from merged drawdata
         if will_save or will_draw:
-            for coords in drawdata:
-                imdata[coords[0]][coords[1]] = drawdata[coords]
+            for coords in self.drawdata:
+                imdata[coords[0]][coords[1]] = self.drawdata[coords]
             self.qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
         
         # save and/or draw
@@ -376,10 +377,6 @@ class Field(qg.QGraphicsView):
             self.save_frame()
         if will_draw:
             self.draw_frame()
-        
-        # if overlay mode, remember drawdata
-        if self.game.config['over']:
-            self.prev_drawdata = drawdata.copy()
         
         # statusbar
         self.game.frame_count += 1
@@ -586,7 +583,6 @@ class Actions():
         if state == qc.Qt.Checked:
             self.game.config['over'] = True
         else:
-            self.game.field.prev_drawdata = {}
             self.game.config['over'] = False
 
 
