@@ -110,7 +110,8 @@ class Game():
             # grid, invert_colors, gl
             if widgetname in ('checkbox_grid',
                               'checkbox_invert_colors',
-                              'checkbox_gl'):
+                              'checkbox_gl',
+                              'checkbox_over'):
                 if def_value:
                     widget.setChecked(True)
                 else:
@@ -232,7 +233,8 @@ class Window(qg.QMainWindow):
                     'gridcolor': self.game.controls.gridcolor,
                     'draw_each': self.game.controls.draw_each,
                     'save_each': self.game.controls.save_each,
-                    'invert_colors': self.game.controls.invert_colors}
+                    'invert_colors': self.game.controls.invert_colors,
+                    'over': self.game.controls.over}
         
         for arg in args:
             controls_method = connects[arg]
@@ -258,6 +260,9 @@ class Field(qg.QGraphicsView):
         
         self.setDragMode(self.ScrollHandDrag)
         self.grids_done = {}
+        
+        # for overlay mode
+        self.prev_drawdata = {}
         
         # when timer triggers, it calls the operate_frame method
         self.timer = qc.QTimer()
@@ -341,11 +346,11 @@ class Field(qg.QGraphicsView):
         self.grids_done[(w,h,zoom,col)] = self.grid
     
     def operate_frame(self):
-        w = self.game.config['w']
-        h = self.game.config['h']
+        w, h = self.game.config['w'], self.game.config['h']
         imdata = self.basis.copy()
         drawdata = self.game.get_drawdata(w, h, self.game.frame_count)
         
+        # if we will save and/or will draw
         try:
             will_save = self.game.frame_count % self.game.config['save_each'] == 0
         except ZeroDivisionError:
@@ -355,16 +360,28 @@ class Field(qg.QGraphicsView):
         except ZeroDivisionError:
             will_draw = False
         
+        # if overlay mode, merge currenct drawdata with previous one
+        if self.game.config['over']:
+            for coords in self.prev_drawdata:
+                drawdata[coords] = self.prev_drawdata[coords]
+        
+        # generate result qimage
         if will_save or will_draw:
             for coords in drawdata:
                 imdata[coords[0]][coords[1]] = drawdata[coords]
             self.qimage = qg.QImage(imdata.data, w, h, qg.QImage.Format_RGB888)
         
+        # save and/or draw
         if will_save:
             self.save_frame()
         if will_draw:
             self.draw_frame()
         
+        # if overlay mode, remember drawdata
+        if self.game.config['over']:
+            self.prev_drawdata = drawdata.copy()
+        
+        # statusbar
         self.game.frame_count += 1
         self.game.win.set_status()
     
@@ -564,6 +581,13 @@ class Actions():
         # start if not paused manually
         if not self.game.win.btn_pause_or_play.isChecked():
             self.game.field.start()
+    
+    def set_over(self, state):
+        if state == qc.Qt.Checked:
+            self.game.config['over'] = True
+        else:
+            self.game.field.prev_drawdata = {}
+            self.game.config['over'] = False
 
 
 class Controls():
@@ -734,6 +758,21 @@ class Controls():
         hbox_invert_colors.addWidget(self.checkbox_invert_colors)
         
         return hbox_invert_colors
+    
+    def over(self):
+        self.checkbox_over = qg.QCheckBox('Overlay')
+        if self.game.config['over']:
+            self.checkbox_over.toggle()
+        self.checkbox_over.stateChanged.connect(self.game.actions.set_over)
+        
+        # remember connection to restore defaults
+        self.ctr_widgets[self.checkbox_over] = {'widgetname': 'checkbox_over',
+                                              'def_value': self.game.config['over']}
+        
+        hbox_over = qg.QHBoxLayout()
+        hbox_over.addWidget(self.checkbox_over)
+        
+        return hbox_over
 
 
 class Owns():
