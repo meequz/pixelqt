@@ -27,7 +27,8 @@ class Game():
                        'gridcolor': [0, 0, 0],
                        'invert_colors': False,
                        'label': False,
-                       'gl': False
+                       'gl': False,
+                       'over': False,
         }
         
         self.newconfig = {}
@@ -114,7 +115,6 @@ class Game():
                     widget.setChecked(True)
                 else:
                     widget.setChecked(False)
-            
     
     def restore_def_ownparams(self):
         for widget in self.owns.param_widgets:
@@ -400,8 +400,7 @@ class Field(qg.QGraphicsView):
             self.scene.addPixmap(self.grid)
     
     def center_scene(self):
-        w = self.game.config['w']
-        h = self.game.config['h']
+        w, h = self.game.config['w'], self.game.config['h']
         zoom = self.game.config['zoom']
         self.scene.setSceneRect(0, 0, w*zoom, h*zoom)
 
@@ -529,7 +528,7 @@ class Actions():
         if self.game.own_params:
             docks.append(self.game.win.dock_ownparams)
         
-        # if one or more is visible, hide
+        # if one or more is visible, will hide
         will_hide = False
         for dock in docks:
             if dock.isVisible():
@@ -838,3 +837,4 @@ class Owns():
             self.game.new_own_params[name] = text
         else:
             self.game.own_params[name] = text
+
