@@ -445,6 +445,9 @@ class Actions():
             self.game.own_params[key] = self.game.new_own_params[key]
         self.game.new_own_params = {}
         
+        # clear previous draw data
+        self.game.field.drawdata = {}
+        
         self.game.frame_count = 0
         self.game.field.start()
     
