@@ -350,15 +350,18 @@ class Field(qg.QGraphicsView):
         imdata = self.basis.copy()
         new_drawdata = self.game.get_drawdata(w, h, self.game.frame_count)
         
+        # it's okay if out of field
+        new_drawdata = dict((k, v) for k, v in new_drawdata.items() if k[0] < h and k[1] < w)
+        
         # if we will save and/or will draw
-        try:
-            will_save = self.game.frame_count % self.game.config['save_each'] == 0
-        except ZeroDivisionError:
+        if self.game.config['save_each'] == 0:
             will_save = False
-        try:
-            will_draw = self.game.frame_count % self.game.config['draw_each'] == 0
-        except ZeroDivisionError:
+        else:
+            will_save = self.game.frame_count % self.game.config['save_each'] == 0
+        if self.game.config['draw_each'] == 0:
             will_draw = False
+        else:
+            will_draw = self.game.frame_count % self.game.config['draw_each'] == 0
         
         # if overlay mode, merge previous drawdata with new one
         if self.game.config['over']:
