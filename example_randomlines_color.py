@@ -3,140 +3,127 @@
 import pixelqt
 import random
 
+const_main_color = [255, 255, 255]
+const_color_y = [255, 0, 0]
+const_color_x = [0, 0, 255]
+const_color_minus_y = [255, 255, 0]
+const_color_minus_x = [0, 255, 0]
 
-class RandLinesCol:
-    def __init__(self):
-        self.main_color = [0, 0, 0]
-        self.color_y = [0, 255, 0]
-        self.color_x = [0, 0, 255]
+
+def set_antirandom_chance(k_y, k_x):
+    global ar_chance_y, ar_chance_x
+    ar_chance_y = [-1] + [0]*k_y + [1]
+    ar_chance_x = [-1] + [0]*k_x + [1]
+
+def get_mix_color(from_color, to_color, share):
+    share = share % 1
+    res_color = []
+    for i in range(3):
+        channel_diff = from_color[i] - to_color[i]
+        res_channel = from_color[i] + int(channel_diff * share)
+        res_color.append(res_channel)
+    return res_color
+
+def get_drawdata(w, h, frame_count):
+    global line
     
-    def set_antirandom_chance(self, k_y, k_x):
-        self.ar_chance_y = [-1] + [0]*k_y + [1]
-        self.ar_chance_x = [-1] + [0]*k_x + [1]
-    
-    def apply_instant_params(self, frame_count):
-        self.line_i = frame_count
-        self.dist = rlc_game.own_params['Distance']
-    
-    def apply_restart_params(self):
-        self.set_antirandom_chance(rlc_game.own_params['Antirandom chance by y'],
-                                   rlc_game.own_params['Antirandom chance by x'])
-    
-    def generate_first_line(self):
-        self.line = [[0, i] for i in range(self.w)]
-        return self.line
-    
-    def generate_first_line_colors(self):
-        self.line_colors = [self.main_color] * self.w
-        return self.line_colors
-    
-    def make_shift(self, current_shift):
-        rand_y = current_shift[0] + random.choice(self.ar_chance_y)
-        rand_x = current_shift[1] + random.choice(self.ar_chance_x)
-        return [rand_y, rand_x]
-    
-    def get_color(self, shift):
-        res_colors = []
-        for sh_i, sh in enumerate(shift):
-            end_color = (self.color_y, self.color_x)[sh_i]
-            res_color = []
-            for i in range(3):
-                # calculate color
-                channel_diff = self.main_color[i] - end_color[i]
-                degree = (sh % 64) / 64
-                res_channel = self.main_color[i] + int(channel_diff * degree)
-                res_color.append(res_channel)
-            res_colors.append(res_color)
+    if frame_count == 0:
+        line = Line(w)
+        set_antirandom_chance(line_game.own_params['Antirandom chance by y'],
+                              line_game.own_params['Antirandom chance by x'])
+    else:
+        line.dist = line_game.own_params['Distance']
         
-        # calculate mean
-        res = []
-        for pair in zip(*res_colors):
-            mean = (pair[0] + pair[1]) // 2
-            res.append(mean)
-        return res
+        line.make_shift()
+        line.colorize()
+        line.move_down(frame_count)
     
-    def get_connect(self, shift_0, shift_1):
-        y = (shift_0[0] - shift_1[0]) // 2
-        x = (shift_0[1] - shift_1[1]) // 2
-        if y not in (shift_0[0], shift_1[0]) and \
-           x not in (shift_0[1], shift_1[1]):
-            return [y, x]
+    res = line.get_dict()
+    return res
+
+
+class Pixel():
+    def __init__(self, i):
+        self.i = i
+        self.basic = True
+        self.shift_y = 0
+        self.shift_x = 0
+        self.color = [255, 255, 255]
+        self.color_y = [255, 255, 255]
+        self.color_x = [255, 255, 255]
+        self.compute_coords()
+        self.real_coords = self.coords.copy()
     
-    def generate_next_line(self, prev_line):
-        self.line = []
-        # make shift
-        for prev_item in prev_line:
-            shift = self.make_shift(prev_item)
-            self.line.append(shift)
-        
-        # fill spaces
-        for i, item in enumerate(self.line):
-            try:
-                next_item = self.line[i+1]
-            except IndexError:
-                break
-            connect = self.get_connect(item, next_item)
-            if connect:
-                self.line.insert(i+1, connect)
-        return self.line
+    def make_shift(self):
+        self.shift_y += random.choice(ar_chance_y)
+        self.shift_x += random.choice(ar_chance_x)
+        self.compute_coords()
     
-    def generate_next_line_colors(self):
-        # colorize each item according to shift
-        for shift in self.line:
-            color = self.get_color(shift)
-            self.line_colors.append(color)
-        return self.line_colors
+    def colorize(self):
+        # color by y
+        if self.shift_y > 0:
+            self.color_y = get_mix_color(const_main_color,
+                                         const_color_y,
+                                         self.shift_y/100)
+        if self.shift_y < 0:
+            self.color_y = get_mix_color(const_main_color,
+                                         const_color_minus_y,
+                                         self.shift_y/100)
+        # color by x
+        if self.shift_x > 0:
+            self.color_x = get_mix_color(const_main_color,
+                                         const_color_x,
+                                         self.shift_x/100)
+        if self.shift_x < 0:
+            self.color_x = get_mix_color(const_main_color,
+                                         const_color_minus_x,
+                                         self.shift_x/100)
+        # mean color
+        self.color = get_mix_color(self.color_y, self.color_x, 0.5)
     
-    def line_to_coordinates(self, line, line_i):
-        sum_dist = line_i * self.dist
-        for item in line:
-            item[0] += sum_dist     # add sum distance to heigth
-        return line
+    def compute_coords(self):
+        self.coords = [self.shift_y, self.i + self.shift_x]
+
+
+class Line():
+    def __init__(self, w):
+        self.w = w
+        self.pixels = []
+        for i in range(w):
+            self.pixels.append(Pixel(i))
     
-    def get_frame(self, is_first):
-        if is_first:
-            line = self.generate_first_line()
-            line_colors = self.generate_first_line_colors()
-        else:
-            line = self.generate_next_line(self.prev_line)
-            line_colors = self.generate_next_line_colors()
-        
-        self.prev_line = line
-        real_line = self.line_to_coordinates(line, self.line_i)
-        
+    def make_shift(self):
+        for pix in self.pixels:
+            pix.make_shift()
+    
+    def colorize(self):
+        for pix in self.pixels:
+            pix.colorize()
+    
+    def move_down(self, frame_i):
+        for pix in self.pixels:
+            pix.real_coords = [frame_i * self.dist + pix.coords[0], pix.coords[1]]
+    
+    def get_dict(self):
         res = {}
-        for i, coords in enumerate(real_line):
-            res[tuple(coords)] = line_colors[i]
+        for pix in self.pixels:
+            res[tuple(pix.real_coords)] = pix.color
         return res
     
-    def get_drawdata(self, w, h, frame_count):
-        if frame_count == 0:
-            self.w, self.h = w, h
-            self.apply_restart_params()
-            is_first = True
-        else:
-            is_first = False
-        
-        self.apply_instant_params(frame_count)
-        res = self.get_frame(is_first)
-        return res
 
+line_game = pixelqt.Game(get_drawdata=get_drawdata)
 
+line_game.config['name'] = 'Color lines with random shift'
+line_game.config['w'] = 400
+line_game.config['h'] = 800
+line_game.config['zoom'] = 1
+line_game.config['save_each'] = 1
+line_game.config['over'] = True
 
-rlc = RandLinesCol()
-rlc_game = pixelqt.Game(get_drawdata=rlc.get_drawdata)
+line_game.init_controls('resolution', 'zoom', 'draw_each', 'over')
 
-rlc_game.config['name'] = 'Color lines with random'
-rlc_game.config['w'] = 400
-rlc_game.config['h'] = 400
-rlc_game.config['zoom'] = 1
-rlc_game.config['save_each'] = 1
-rlc_game.config['over'] = True
+line_game.add_own_num(name='Distance', default=6, need_to_restart=False, minimum=1, maximum=20, step=1)
+line_game.add_own_num(name='Antirandom chance by x', default=32, need_to_restart=True, minimum=1, maximum=99, step=1)
+line_game.add_own_num(name='Antirandom chance by y', default=32, need_to_restart=True, minimum=1, maximum=99, step=1)
 
-rlc_game.init_controls('resolution', 'zoom', 'draw_each')
-
-rlc_game.add_own_num(name='Distance', default=16, need_to_restart=False, minimum=1, maximum=20, step=1)
-rlc_game.add_own_num(name='Antirandom chance by x', default=32, need_to_restart=True, minimum=1, maximum=99, step=1)
-rlc_game.add_own_num(name='Antirandom chance by y', default=32, need_to_restart=True, minimum=1, maximum=99, step=1)
-
-rlc_game.run()
+line_game.run()
