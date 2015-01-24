@@ -794,9 +794,9 @@ class Owns():
                                     'maximum': maximum,
                                     'step': step}
         
-        spin.setValue(default)
         spin.setMinimum(minimum)
         spin.setMaximum(maximum)
+        spin.setValue(default)
         spin.setSingleStep(step)
         
         spin.valueChanged[str].connect(self.num_change)
