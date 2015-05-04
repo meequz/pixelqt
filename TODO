@@ -5,6 +5,9 @@ General
 - add superposition mode
 - add ability to output some info (average color, for example). small widget with console for output
 - add control widget which schedule the pause (e.g. after 10000 frame)
+- add leading zeros to numbers in screen filenames
+- restructure api
+- separate gui and backend to 2 processess
 
 Controls
 - add tooltips to all controls
@@ -23,7 +26,6 @@ Bugs and support
 - fix bug with strange drawing on some resolutions, e.g. 150x120 
 - analize similar pieces of code and move this functionality to special methods
 - write detailed guide with examples for all features
-- port my color_pixels from pygame to pixelqt
 - add example of using choice_list with presets of ingame parameters and field configuration
 - ? check if it works on mswindows and mac and fix if not
 
