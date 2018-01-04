@@ -1,17 +1,18 @@
 #! /usr/bin/env python3
 # coding: utf-8
-import sys
-from PyQt4 import QtGui as qg
-from PyQt4 import QtCore as qc
-from PyQt4 import QtOpenGL
-from OpenGL import GL    # need for nvidia cards
-import numpy
 import datetime
 import os
+import sys
+
+import numpy
+from PyQt4 import QtCore as qc
+from PyQt4 import QtGui as qg
+from PyQt4 import QtOpenGL
 
 
-class Game():
+class Game:
     """Creates all classes and config."""
+
     def __init__(self, get_drawdata):
         self.game = self
         self.app = qg.QApplication(sys.argv)
@@ -141,6 +142,7 @@ class Game():
 
 class Window(qg.QMainWindow):
     """Creates main widget and set window parameters (title, size etc)."""
+
     def __init__(self, game_instance):
         super(Window, self).__init__()
         self.game = game_instance
@@ -422,8 +424,9 @@ class Field(qg.QGraphicsView):
         self.scene.setSceneRect(0, 0, w*zoom, h*zoom)
 
 
-class Actions():
+class Actions:
     """Makes non-drawing changes accordig to config parameters."""
+
     def __init__(self, game_instance):
         self.game = game_instance
     
@@ -592,8 +595,11 @@ class Actions():
             self.game.config['over'] = False
 
 
-class Controls():
-    """Contains base horizontal boxes and connects their widgets with actions"""
+class Controls:
+    """Contains base horizontal boxes and connects
+    their widgets with actions
+    """
+
     def __init__(self, game_instance):
         self.game = game_instance
         # for store default values
@@ -638,7 +644,7 @@ class Controls():
         self.spin_zoom = qg.QSpinBox()
         self.spin_zoom.setMinimum(1)
         self.spin_zoom.setValue(self.game.config['zoom'])
-        self.spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom_catch)        # str?
+        self.spin_zoom.valueChanged[str].connect(self.game.actions.set_zoom_catch)  # str?
         
         # remember connection to restore defaults
         self.ctr_widgets[self.spin_zoom] = {'widgetname': 'spin_zoom',
@@ -779,10 +785,10 @@ class Controls():
 
 class Owns():
     """Operate controls and actions of own parameters"""
+
     def __init__(self, game_instance):
         self.game = game_instance
         self.param_widgets = {}
-    
     
     def add_own_num(self, name, default, need_to_restart, minimum, maximum, step):
         label = qg.QLabel(name)
@@ -878,4 +884,3 @@ class Owns():
             self.game.new_own_params[name] = text
         else:
             self.game.own_params[name] = text
-
