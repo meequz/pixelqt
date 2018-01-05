@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 import random
+import time
 
 import pixelqt
 
@@ -57,49 +58,61 @@ class Frame:
             self.raw[pixel] = obj.color
 
 
-def get_next_pos_to(init_x, init_y, target_x, target_y):
-    if init_x < target_x:
-        res_x = init_x + 1
-    elif init_x > target_x:
-        res_x = init_x - 1
-    else:
-        res_x = init_x
+class Path:
+    color = (180, 180, 180)
 
-    if init_y < target_y:
-        res_y = init_y + 1
-    elif init_y > target_y:
-        res_y = init_y - 1
-    else:
-        res_y = init_y
+    def __init__(self, x1, y1, x2, y2):
+        self.x1 = x1
+        self.x2 = x2
+        self.y1 = y1
+        self.y2 = y2
+        self.pixels = [(self.x1, self.y1)]
+        self._generate()
 
-    return res_x, res_y
+    def _generate(self):
+        next_x = self.x1
+        next_y = self.y1
+        while next_x != self.x2 or next_y != self.y2:
+            next_pos = self._get_next_pos(next_x, next_y, self.x2, self.y2)
+            self.pixels.append(next_pos)
+            next_x, next_y = next_pos
+
+    def _get_next_pos(self, x1, y1, x2, y2):
+        if x1 < x2:
+            res_x = x1 + 1
+        elif x1 > x2:
+            res_x = x1 - 1
+        else:
+            res_x = x1
+        if y1 < y2:
+            res_y = y1 + 1
+        elif y1 > y2:
+            res_y = y1 - 1
+        else:
+            res_y = y1
+        return res_x, res_y
 
 
-def get_or_create_leds(frame, frame_count):
-    if frame_count == 0:
-        Led('led_1')
-        Led('led_2')
-
-    led_1 = OBJS['led_1']
-    led_2 = OBJS['led_2']
-    frame.draw(led_1)
-    frame.draw(led_2)
-    return led_1, led_2
-
-
-def get_or_create_next_path_dot(led_1, led_2, frame, frame_count):
-    global PREV_PATH_POS
-    if frame_count == 0:
-        PREV_PATH_POS = led_1.y, led_1.x
-    PREV_PATH_POS = get_next_pos_to(
-        PREV_PATH_POS[0], PREV_PATH_POS[1], led_2.y, led_2.x)
-    frame.raw[PREV_PATH_POS] = (180, 180, 180)
+def create_led_near(led):
+    new_x = led.x + random.randint(-15, 15)
+    new_y = led.y + random.randint(-15, 15)
+    new_led = Led(None, new_x, new_y)
+    return new_led
 
 
 def get_drawdata(w, h, frame_count):
     frame = Frame()
-    led_1, led_2 = get_or_create_leds(frame, frame_count)
-    get_or_create_next_path_dot(led_1, led_2, frame, frame_count)
+
+    prev_led = Led('led_0', WIDTH / 2, HEIGHT / 2)
+    frame.draw(prev_led)
+
+    for i in range(50):
+        led = create_led_near(prev_led)
+        frame.draw(led)
+        path = Path(prev_led.y, prev_led.x, led.y, led.x)
+        frame.draw(path)
+        prev_led = led
+
     return frame.raw
 
 
@@ -111,6 +124,6 @@ game.init_controls(
 game.config['name'] = 'Light Chain'
 game.config['w'] = WIDTH
 game.config['h'] = HEIGHT
-game.config['over'] = True
+game.config['over'] = False
 game.config['background'] = (0, 0, 0)
 game.run()
